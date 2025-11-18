@@ -32,16 +32,26 @@ export const AuthProvider = ({ children }) => {
     }
   }, []);
 
-  const login = (authResponse) => {
-    const { token, role, name } = authResponse;
+const login = (authResponse) => {
+  const { token, role, name } = authResponse;
 
-    localStorage.setItem('token', token);
-    localStorage.setItem('role', role);
-    localStorage.setItem('name', name);
+  localStorage.setItem('token', token);
+  localStorage.setItem('role', role);
+  localStorage.setItem('name', name);
 
-    setUser({ token, role, name });
-    navigate('/dashboard'); // Redirect after successful login
-  };
+  setUser({ token, role, name });
+  
+  // Role-based navigation
+  if (role === 'ADMIN') {
+    navigate('/admin');
+  } else if (role === 'MANAGER') {
+    navigate('/manager');
+  } else if (role === 'EMPLOYEE') {
+    navigate('/employee'); // Add employee route if needed
+  } else {
+    navigate('/'); // Fallback
+  }
+};
 
   const logout = () => {
     localStorage.clear();

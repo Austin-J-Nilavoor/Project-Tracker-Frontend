@@ -66,10 +66,9 @@ const TaskCard = ({ task, onDragStart }) => {
 const TaskBoard = () => {
     // --- State and Context ---
     const { user, logout } = useAuth();
-    const navigate = useNavigate();
     
     // NOTE: In a real app, projectId would come from URL params (useParams)
-    const projectId = "7674e452-c9e3-4fae-a5b5-75d0abe57fb6"; 
+      const { projectId } = useParams();
 
     const [tasks, setTasks] = useState([]);
     const [loading, setLoading] = useState(true);

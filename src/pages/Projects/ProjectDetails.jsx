@@ -3,7 +3,10 @@ import { useParams, useNavigate } from 'react-router-dom';
 import projectService from '../../services/projectServices.js';
 import projectMemberService from '../../services/membersServices.js';
 import milestoneService from '../../services/milestoneServices.js';
+import userService from '../../services/userServices.js';
+import CommonHeader from '../../components/Header.jsx';
 import { Check, Clock, Calendar, Anchor, Tag, Users, User, Edit, ChevronDown } from 'lucide-react';
+import Breadcrumbs from '../../components/BreadCrumbs.jsx';
 
 
 // --- Helper Components ---
@@ -113,7 +116,7 @@ const MemberAvatar = ({ name, role, email }) => {
             <div className="member-details">
                 <p className="member-name">{name}</p>
                 {/* <p className="member-role">{role}</p> */}
-                <p className="member-email">{email}</p>
+                {/* <p className="member-email">{email}</p> */}
             </div>
 
         </div>
@@ -131,6 +134,31 @@ const ProjectDetails = () => {
     const [error, setError] = useState(null);
     const [statusError, setStatusError] = useState(null);
 
+    const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+    const [allUsers, setAllUsers] = useState([]);
+    const [selectedUserId, setSelectedUserId] = useState("");
+    const [selectedRole, setSelectedRole] = useState("DEVELOPER");
+
+    const [showAddMilestoneModal, setShowAddMilestoneModal] = useState(false);
+
+    const [milestoneName, setMilestoneName] = useState("");
+    const [milestoneDescription, setMilestoneDescription] = useState("");
+    const [milestoneStatus, setMilestoneStatus] = useState("PENDING");
+    const [milestoneStart, setMilestoneStart] = useState("");
+    const [milestoneEnd, setMilestoneEnd] = useState("");
+    const [milestoneDependsOn, setMilestoneDependsOn] = useState("");
+    // Add this to your component's state declarations
+    const [milestoneError, setMilestoneError] = useState(null);
+    useEffect(() => {
+        if (!milestoneDependsOn) return;
+
+        const parent = milestones.find(m => m.id === milestoneDependsOn);
+        if (parent && parent.endDate) {
+            setMilestoneStart(parent.endDate);  // auto-fill start date
+        }
+    }, [milestoneDependsOn, milestones]);
+
+
     // --- Data Fetching ---
     const fetchData = useCallback(async () => {
         if (!projectId) {
@@ -145,14 +173,16 @@ const ProjectDetails = () => {
 
         try {
             // Fetch three endpoints concurrently
-            const [projectData, membersData, milestonesData] = await Promise.all([
+            const [projectData, membersData, milestonesData, userData] = await Promise.all([
                 projectService.getProjectById(projectId),
                 projectMemberService.getMembersByProject(projectId),
-                milestoneService.getMilestonesByProject(projectId)
+                milestoneService.getMilestonesByProject(projectId),
+                userService.getAllUsers()
             ]);
 
             setProject(projectData);
             setMembers(membersData);
+            setAllUsers(userData);
 
             // Apply topological sort to milestones
             const sortedMilestones = topologicalSort(milestonesData);
@@ -194,21 +224,82 @@ const ProjectDetails = () => {
     // --- Data Mapping ---
 
     const statusText = project.status.toLowerCase().replace(/_/g, ' ').replace(/\b\w/g, c => c.toUpperCase());
-    const projectManager = members.find(m => m.role === 'PROJECT_MANAGER');
+    const projectManagers = members.filter(m => m.role === 'PROJECT_MANAGER');
+
     const teamMembers = members.filter(m => m.role !== 'PROJECT_MANAGER');
     const totalMembers = members.length;
+    const handleAddMember = async () => {
+        if (!selectedUserId) return;
+
+        await projectMemberService.addMember({
+            projectId,
+            userId: selectedUserId,
+            role: selectedRole
+        });
+
+        setShowAddMemberModal(false);
+        setSelectedUserId("");
+        setSelectedRole("DEVELOPER");
+        fetchData(); // reload UI
+    };
+    const handleAddMilestone = async () => {
+        // 1. Clear any previous error before attempting the request
+        setMilestoneError(null);
+
+        const newMilestone = {
+            name: milestoneName,
+            description: milestoneDescription,
+            status: milestoneStatus,
+            startDate: milestoneStart,
+            endDate: milestoneEnd,
+            projectId,
+            dependsOnId: milestoneDependsOn || null
+        };
+
+        try {
+            const response = await milestoneService.createMilestone(newMilestone);
+            console.log("Milestone created:", response);
+
+            // 2. SUCCESS LOGIC: Only run reset and close on success
+            setMilestoneName("");
+            setMilestoneDescription("");
+            setMilestoneStatus("PENDING");
+            setMilestoneStart("");
+            setMilestoneEnd("");
+            setMilestoneDependsOn("");
+
+            setShowAddMilestoneModal(false);
+            fetchData();
+
+        } catch (error) {
+            // 3. ERROR LOGIC: Set the error message and do NOT close the modal
+            const errorMessage = error.response?.data?.message || "An unexpected error occurred.";
+
+            console.error("Error creating milestone:", errorMessage);
+            setMilestoneError(errorMessage); // Store the error in state
+        }
+    };
+
 
     // --- Main Render ---
 
-    return (
+    return (<>
+        <CommonHeader
+            title="Edit Project"
+            btnIcon={<Edit size={18} />}
+            onClick={() => console.log("New Project Modal Opened")}
+            showSearch={true}
+        />
+        <Breadcrumbs />
         <div className="project-details-wrapper">
+
             {/* --- Project Header --- */}
             <div className="project-details-header">
                 <h1 className="project-title">{project.name || 'Project Title Missing'}</h1>
-                <button className="btn btn-secondary edit-button">
+                {/* <button className="btn btn-secondary edit-button">
                     <Edit size={16} />
                     <span>Edit Project</span>
-                </button>
+                </button> */}
             </div>
 
             <div className="project-header-meta">
@@ -238,7 +329,7 @@ const ProjectDetails = () => {
                         <div className="project-dates">
                             <span>Start: {project.startDate}</span>
                             <span>End: {project.endDate}</span>
-                            <span>IBU: {project.ibuName}</span>
+                            {/* <span>IBU: {project.ibuName}</span> */}
                         </div>
                     </div>
 
@@ -268,7 +359,16 @@ const ProjectDetails = () => {
 
                     {/* Milestones Timeline */}
                     <div className="milestone-timeline-section">
-                        <h3 className="section-heading">MILESTONES TIMELINE</h3>
+                        <div className="section-heading milestone-header">
+                            <h3>MILESTONES TIMELINE</h3>
+                            <button
+                                className="add-member-btn"
+                                onClick={() => setShowAddMilestoneModal(true)}
+                            >
+                                + Add Milestone
+                            </button>
+                        </div>
+
                         {statusError && <div className="error-box milestone-error">Status Update Failed: {statusError}</div>}
                         <div className="milestone-list">
                             {milestones.length === 0 ? (
@@ -293,13 +393,31 @@ const ProjectDetails = () => {
 
                     {/* Team Section */}
                     <div className="team-section sidebar-card">
-                        <h3 className="section-heading">TEAM</h3>
-                        {projectManager && (
+                        <div className="section-heading">
+                            <h3 >TEAM</h3><button
+                                className="add-member-btn"
+                                onClick={() => setShowAddMemberModal(true)}
+                            >
+                                + Add Member
+                            </button></div>
+
+
+
+                        {projectManagers.length > 0 && (
                             <div className="project-manager-info">
-                                <h4>Project Manager</h4>
-                                <MemberAvatar name={projectManager.userName} email={"changeit@email.com"} role={projectManager.roleInProject || projectManager.role} />
+                                <h4>Project Managers ({projectManagers.length})</h4>
+
+                                {projectManagers.map(pm => (
+                                    <MemberAvatar
+                                        key={pm.userId}
+                                        name={pm.userName}
+                                    // email={pm.email || "N/A"}
+                                    // role={pm.role}
+                                    />
+                                ))}
                             </div>
                         )}
+
 
                         <h4 className="team-members-title">Team Members ({teamMembers.length})</h4>
                         <div className="team-member-avatars">
@@ -331,6 +449,131 @@ const ProjectDetails = () => {
                 </div>
             </main>
         </div>
+        {showAddMemberModal && (
+            <div className="modal-overlay">
+                <div className="modal-box">
+                    <h3>Add Member</h3>
+
+                    <label>User</label>
+                    <select
+                        value={selectedUserId}
+                        onChange={(e) => setSelectedUserId(e.target.value)}
+                    >
+                        <option value="">Select User</option>
+                        {allUsers.map(u => (
+                            <option key={u.id} value={u.id}>
+                                {u.name} ({u.email})
+                            </option>
+                        ))}
+                    </select>
+
+                    <label>Role</label>
+                    <select
+                        value={selectedRole}
+                        onChange={(e) => setSelectedRole(e.target.value)}
+                    >
+                        <option value="PROJECT_MANAGER">Project Manager</option>
+                        <option value="DEVELOPER">Developer</option>
+                    </select>
+
+                    <div className="modal-actions">
+                        <button className="btn btn-primary" onClick={handleAddMember}>
+                            Add
+                        </button>
+                        <button className="btn btn-secondary" onClick={() => setShowAddMemberModal(false)}>
+                            Cancel
+                        </button>
+                    </div>
+                </div>
+            </div>
+        )}
+        {showAddMilestoneModal && (
+            <div className="modal-overlay">
+                <div className="modal-box modal-box-milestone">
+                    <h3>Add Milestone</h3>
+                    {milestoneError && (
+                        <div className="error-message">
+                            <strong>Error:</strong> {milestoneError}
+                        </div>
+                    )}
+                    <div className="modal-row"> <input
+                        type="text"
+                        value={milestoneName}
+                        onChange={(e) => setMilestoneName(e.target.value)}
+                        placeholder="Milestone name"
+                    />
+
+
+                        <input
+                            type="text"
+                            value={milestoneDescription}
+                            onChange={(e) => setMilestoneDescription(e.target.value)}
+                            placeholder="Milestone description"
+                        />
+                    </div>
+
+                    <div className="modal-row">
+                        <div className="modal-col">
+                            <label>Depends On</label>
+                            <select
+                                value={milestoneDependsOn}
+                                onChange={(e) => setMilestoneDependsOn(e.target.value)}
+                            >
+                                <option value="">None</option>
+                                {milestones.map(m => (
+                                    <option key={m.id} value={m.id}>
+                                        {m.name}
+                                    </option>
+                                ))}
+                            </select></div>
+                        <div className="modal-col">
+                            <label>Status</label>
+                            <select
+                                value={milestoneStatus}
+                                onChange={(e) => setMilestoneStatus(e.target.value)}
+                            >
+                                <option value="PENDING">Pending</option>
+                                <option value="IN_PROGRESS">In Progress</option>
+                                <option value="COMPLETED">Completed</option>
+                            </select>
+                        </div>
+
+                    </div>
+
+                    <div className="modal-row">
+                        <div className="modal-col">
+                            <label>Start Date</label>
+                            <input
+                                type="date"
+                                value={milestoneStart}
+                                onChange={(e) => setMilestoneStart(e.target.value)}
+                            />
+
+                        </div>
+                        <div className="modal-col">
+                            <label>End Date</label>
+                            <input
+                                type="date"
+                                value={milestoneEnd}
+                                onChange={(e) => setMilestoneEnd(e.target.value)}
+                            />
+                        </div>
+
+                    </div>
+
+
+
+
+                    <div className="modal-actions">
+                        <button className="btn-primary" onClick={handleAddMilestone}>Add</button>
+                        <button className="btn-secondary" onClick={() => setShowAddMilestoneModal(false)}>Cancel</button>
+                    </div>
+                </div>
+            </div>
+        )}
+
+
+    </>
     );
 };
 

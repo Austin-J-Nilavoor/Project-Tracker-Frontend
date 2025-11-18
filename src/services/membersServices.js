@@ -20,9 +20,25 @@ const getMembersByProject = async (projectId) => {
     }
 };
 
+/**
+ * Adds a member to a project.
+ * Calls POST /api/members/add
+ * @param {object} payload - { projectId, userId, role }
+ * @returns {Promise<object>} ApiResponse<ProjectMemberDto>
+ */
+const addMember = async (payload) => {
+    try {
+        const response = await api.post(`${MEMBER_URL}`, payload);
+
+        return response.data.data; 
+    } catch (error) {
+        throw error;
+    }
+};
+
 const projectMemberService = {
     getMembersByProject,
-    // Add addMember, removeMember here later
+    addMember
 };
 
 export default projectMemberService;

@@ -4,7 +4,7 @@ import authService from '../../services/authServices'; // Corrected filename to 
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react'; // Import icons for password toggle
 
-const Login = ({ setIsVisible }) => {
+const Login = () => {
     const { isAuthenticated, login: authLogin, user} = useAuth();
     const navigate = useNavigate();
 
@@ -17,7 +17,7 @@ const Login = ({ setIsVisible }) => {
     // but preserving your inline logic here for current functionality.
     useEffect(() => {
         if (isAuthenticated && user) {
-            setIsVisible(true); 
+            
             redirectUser(user.role);
         }
     }, [isAuthenticated, user, navigate]);

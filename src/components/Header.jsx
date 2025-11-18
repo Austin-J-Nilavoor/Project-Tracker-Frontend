@@ -9,7 +9,7 @@ import { Briefcase, Plus, LogOut, Search, Settings } from 'lucide-react';
  * @param {Function} props.onClick - Handler for the main button click.
  * @param {boolean} [props.showSearch=false] - If true, displays a search bar (for pages like TaskBoard/Dashboard).
  */
-const Header = ({ title, onClick, showSearch = false }) => {
+const Header = ({ title,btnIcon = <Plus size={18} />, onClick, showSearch = false }) => {
     const { user, logout } = useAuth();
     const [showMenu, setShowMenu] = useState(false);
 
@@ -27,7 +27,7 @@ const Header = ({ title, onClick, showSearch = false }) => {
             </div>
 
             {/* CENTER: Search Bar (Conditional) */}
-            {/* {showSearch && (
+            {showSearch && (
                 <div className="search-container header-search-bar">
                     <Search className="search-icon" />
                     <input
@@ -36,21 +36,21 @@ const Header = ({ title, onClick, showSearch = false }) => {
                         className="search-input"
                     />
                 </div>
-            )} */}
+            )}
 
             {/* RIGHT SIDE: Action Button & Profile */}
             <div className="header-actions">
                 
                 {/* Dynamic Action Button (if title and onClick are provided) */}
-                {/* {title && onClick && (
+                {title && onClick && (
                     <button 
                         onClick={onClick}
                         className="btn btn-primary"
                     >
-                        <Plus size={18} />
+                        {btnIcon}
                         <span>{title}</span>
                     </button>
-                )} */}
+                )}
 
                 {/* Profile/Settings Icon (Non-functional placeholders) */}
                 {/* <Settings className="action-icon" /> */}

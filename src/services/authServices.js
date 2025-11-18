@@ -10,12 +10,31 @@ const AUTH_URL = '/auth';
  */
 const login = async (email, password) => {
     try {
-        // Calls the backend endpoint POST /api/auth/login
         const response = await api.post(`${AUTH_URL}/login`, { email, password });
-        
-        // The backend uses an ApiResponse wrapper, so the useful data is inside 'data.data'
-        return response.data.data; 
-        
+        return response.data.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+/**
+ * Handles user registration.
+ * @param {object} userData - All registration fields.
+ * Example:
+ * {
+ *   name: "",
+ *   email: "",
+ *   password: "",
+ *   role: "",
+ *   phone: "",
+ *   ibuId: ""
+ * }
+ * @returns {Promise<object>} ApiResponse containing created user.
+ */
+const register = async (userData) => {
+    try {
+        const response = await api.post(`${AUTH_URL}/register`, userData);
+        return response.data.data;
     } catch (error) {
         throw error;
     }
@@ -23,6 +42,7 @@ const login = async (email, password) => {
 
 const authService = {
     login,
+    register,
 };
 
 export default authService;

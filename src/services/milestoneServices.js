@@ -19,9 +19,16 @@ const getMilestonesByProject = async (projectId) => {
         throw error;
     }
 };
+const createMilestone = async (data) => {
+    const response = await api.post(`/milestones`, data);
+    return response.data.data;
+};
+
+
 
 const milestoneService = {
     getMilestonesByProject,
+    createMilestone
     // Add createMilestone, updateMilestone, deleteMilestone here later
 };
 

@@ -1,10 +1,12 @@
 import React, { useState, useEffect, useCallback, useMemo } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import userService from '../../services/userServices';
+import ibuService from '../../services/ibuServices';
+import register from '../../services/authServices'
+import CommonHeader from '../../components/Header';
 import { Search, User, Briefcase, Trash2, Edit, HelpCircle, ChevronDown, Plus } from 'lucide-react';
 
 // --- Static Lookups for Filters ---
-const STATIC_IBUS = ['All', 'Corporate', 'Innovations', 'Product Dev', 'Marketing', 'Sales'];
 const STATIC_ROLES = ['All', 'ADMIN', 'MANAGER', 'EMPLOYEE'];
 
 const AdminDashboard = () => {
@@ -14,6 +16,18 @@ const AdminDashboard = () => {
     const [users, setUsers] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const [ibus, setIbus] = useState([]);
+
+    // Modal State
+    const [showAddModal, setShowAddModal] = useState(false);
+    const [newUser, setNewUser] = useState({
+        name: '',
+        email: '',
+        password: '',
+        role: 'EMPLOYEE',
+        ibuName: ''
+    });
+
 
     // Filtering State
     const [searchTerm, setSearchTerm] = useState('');
@@ -39,6 +53,14 @@ const AdminDashboard = () => {
             setAllUsers([]);
         } finally {
             setLoading(false);
+        }
+    }, []);
+    const fetchIbus = useCallback(async () => {
+        try {
+            const data = await ibuService.getAllIbus();  // <-- API call
+            setIbus(["All", ...data.map(i => i.name)]);   // assuming backend returns [{id,name}]
+        } catch {
+            setIbus(["All"]);
         }
     }, []);
 
@@ -68,7 +90,32 @@ const AdminDashboard = () => {
     // 2. Initial load hook
     useEffect(() => {
         fetchAllUsersData();
-    }, [fetchAllUsersData]);
+        fetchIbus();
+    }, [fetchAllUsersData, fetchIbus]);
+
+    const handleCreateUser = async () => {
+        if (!newUser.name || !newUser.email || !newUser.password) {
+            alert("Please fill all fields.");
+            return;
+        }
+
+        try {
+            await register.register(newUser);
+            setShowAddModal(false);
+
+            setNewUser({
+                name: '',
+                email: '',
+                password: '',
+                role: 'EMPLOYEE',
+                ibuName: ''
+            });
+
+            fetchAllUsersData();
+        } catch {
+            alert("Failed to create user.");
+        }
+    };
 
     const handleDelete = async (userId) => {
         if (!window.confirm("Are you sure you want to delete this user? This action cannot be undone.")) {
@@ -168,20 +215,9 @@ const AdminDashboard = () => {
 
     return (
         <div className="dashboard-wrapper">
-            {/* --- Header/Navbar ---
-            <header className="dashboard-header">
-                <div className="logo-section">
-                    <Briefcase className="logo-icon" />
-                    <span className="logo-text">Project Tracker</span>
-                </div>
-                <div className="header-actions">
-                    <HelpCircle className="action-icon" />
-                    <button onClick={logout} className="user-avatar-button">
-                         {user.name.charAt(0)}
-                    </button>
-                </div>
-            </header> */}
-
+            <CommonHeader
+                showSearch={false}
+            />
             {/* --- Main Content Area --- */}
             <main className="main-content">
                 {/* Greeting & Subtitle */}
@@ -201,7 +237,8 @@ const AdminDashboard = () => {
                             <span>Create IBU</span>
                         </button>
                         <button
-                            onClick={() => console.log("Create User")}
+                            onClick={() => setShowAddModal(true)}
+
                             className="btn btn-primary"
                         >
                             <User size={18} />
@@ -229,7 +266,7 @@ const AdminDashboard = () => {
                     {/* Filters */}
                     <div className="filter-dropdowns">
                         <Dropdown title="Role" options={STATIC_ROLES} selected={selectedRole} onSelect={setSelectedRole} />
-                        <Dropdown title="IBU" options={STATIC_IBUS} selected={selectedIbu} onSelect={setSelectedIbu} />
+                        <Dropdown title="IBU" options={ibus} selected={selectedIbu} onSelect={setSelectedIbu} />
                     </div>
                 </div>
 
@@ -261,7 +298,71 @@ const AdminDashboard = () => {
                 </div>
 
             </main>
+            {showAddModal && (
+                <div className="modal-overlay">
+                    <div className="modal-box">
+
+                        <h2>Create User</h2>
+
+                        <input
+                            type="text"
+                            placeholder="Name"
+                            value={newUser.name}
+                            onChange={(e) => setNewUser({ ...newUser, name: e.target.value })}
+                        />
+
+                        <input
+                            type="email"
+                            placeholder="Email"
+                            value={newUser.email}
+                            onChange={(e) => setNewUser({ ...newUser, email: e.target.value })}
+                        />
+
+                        <input
+                            type="password"
+                            placeholder="Password"
+                            value={newUser.password}
+                            onChange={(e) => setNewUser({ ...newUser, password: e.target.value })}
+                        />
+
+                        <label>Role</label>
+                        <select
+                            value={newUser.role}
+                            onChange={(e) => setNewUser({ ...newUser, role: e.target.value })}
+                        >
+                            <option value="ADMIN">ADMIN</option>
+                            <option value="MANAGER">MANAGER</option>
+                            <option value="EMPLOYEE">EMPLOYEE</option>
+                        </select>
+
+                        <label>IBU</label>
+                        <select
+                            value={newUser.ibuName}
+                            onChange={(e) => setNewUser({ ...newUser, ibuName: e.target.value })}
+                        >
+                            <option value="">Select IBU</option>
+                            {ibus.filter(i => i !== "All").map(ibu => (
+
+                                <option key={ibu} value={ibu}>{ibu}</option>
+                            ))}
+                        </select>
+
+                        <div className="modal-actions">
+                            <button className="btn btn-secondary" onClick={() => setShowAddModal(false)}>
+                                Cancel
+                            </button>
+
+                            <button className="btn btn-primary" onClick={handleCreateUser}>
+                                Create
+                            </button>
+                        </div>
+
+                    </div>
+                </div>
+            )}
+
         </div>
+
     );
 };
 
