@@ -11,10 +11,10 @@ const MEMBER_URL = '/members';
 const getMembersByProject = async (projectId) => {
     try {
         const response = await api.get(`${MEMBER_URL}/project/${projectId}`);
-        
+
         // The backend wraps data in ApiResponse<T>, so we extract the 'data' field.
-        return response.data.data; 
-        
+        return response.data.data;
+
     } catch (error) {
         throw error;
     }
@@ -30,7 +30,24 @@ const addMember = async (payload) => {
     try {
         const response = await api.post(`${MEMBER_URL}`, payload);
 
-        return response.data.data; 
+        return response.data.data;
+    } catch (error) {
+        throw error;
+    }
+};
+/**
+ * Removes a member from a project.
+ * Calls DELETE /api/members/project/{projectId}/user/{userId}
+ * @param {string} projectId 
+ * @param {string} userId 
+ */
+const removeMember = async (projectId, userId) => {
+    try {
+        // Assuming your backend endpoint structure follows this pattern:
+        await api.delete(`${MEMBER_URL}/project/remove-member`, {
+            params: { projectId, userId }
+        });
+
     } catch (error) {
         throw error;
     }
@@ -38,7 +55,8 @@ const addMember = async (payload) => {
 
 const projectMemberService = {
     getMembersByProject,
-    addMember
+    addMember,
+    removeMember
 };
 
 export default projectMemberService;

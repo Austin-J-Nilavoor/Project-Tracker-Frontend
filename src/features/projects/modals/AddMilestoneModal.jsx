@@ -10,7 +10,7 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
         status: "PENDING",
         startDate: "",
         endDate: "",
-        dependsOnId: ""
+        dependsOnId: null
     });
 
     const [error, setError] = useState(null);
@@ -25,7 +25,7 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
                 status: milestoneToEdit.status || "PENDING",
                 startDate: milestoneToEdit.startDate ? milestoneToEdit.startDate.substring(0, 10) : "",
                 endDate: milestoneToEdit.endDate ? milestoneToEdit.endDate.substring(0, 10) : "",
-                dependsOnId: milestoneToEdit.dependsOnId || ""
+                dependsOnId: milestoneToEdit.dependsOnId || null
             });
         }
     }, [milestoneToEdit]);

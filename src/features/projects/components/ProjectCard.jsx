@@ -75,6 +75,7 @@ const ProjectCard = ({ project }) => {
     const { user } = useAuth();
     const [progress, setProgress] = useState(0);
     const [members, setMembers] = useState([]); // State for real members
+    const [activeMilestoneId, setActiveMilestoneId] = useState(null); // State for active milestone
 
     // --- Fetch Data (Progress & Members) ---
     useEffect(() => {
@@ -90,13 +91,24 @@ const ProjectCard = ({ project }) => {
                 const [milestones, fetchedMembers] = await Promise.all([milestonesPromise, membersPromise]);
                 
                 if (isMounted) {
-                    // Calculate Progress
+                    // Calculate Progress & Identify Active Milestone
                     if (!milestones || milestones.length === 0) {
                         setProgress(0);
+                        setActiveMilestoneId(null);
                     } else {
                         const total = milestones.length;
                         const completed = milestones.filter(m => m.status === 'COMPLETED').length;
                         setProgress(Math.round((completed / total) * 100));
+
+                        // Logic to find "Current Active" milestone:
+                        // 1. First one IN_PROGRESS
+                        // 2. Else, first one PENDING
+                        // 3. Fallback to the first milestone in the list
+                        const active = milestones.find(m => m.status === 'IN_PROGRESS') 
+                                    || milestones.find(m => m.status === 'PENDING')
+                                    || milestones[0];
+                        
+                        setActiveMilestoneId(active ? active.id : null);
                     }
 
                     // Set Members
@@ -118,7 +130,16 @@ const ProjectCard = ({ project }) => {
 
     const status = project.status ? project.status.toUpperCase() : 'PENDING';
     const statusClass = status.toLowerCase().replace(/_/g, '-');
-    const canManage = user && (user.role === 'ADMIN' || user.role === 'MANAGER');
+
+    const handleViewTasks = () => {
+        if (activeMilestoneId) {
+            // Route to the specific active milestone board
+            navigate(`/projects/${project.id}/milestones/${activeMilestoneId}/tasks`);
+        } else {
+            // Fallback to generic project tasks if no milestone active
+            navigate(`/projects/${project.id}/tasks`);
+        }
+    };
 
     return (
         <div className="project-card">
@@ -146,14 +167,14 @@ const ProjectCard = ({ project }) => {
                 >
                     View Details
                 </button>
-                {canManage && (
-                    <button 
-                        className="btn-card btn-manage"
-                        onClick={() => console.log('Manage', project.id)}
-                    >
-                        Manage
-                    </button>
-                )}
+                
+                {/* View Tasks Button - Available to all users */}
+                <button 
+                    className="btn-card btn-manage"
+                    onClick={handleViewTasks}
+                >
+                    View Tasks
+                </button>
             </div>
         </div>
     );

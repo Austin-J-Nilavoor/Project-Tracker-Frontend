@@ -55,12 +55,23 @@ const createTask = async (taskData) => {
     }
 };
 
+const updateTask = async (taskId, taskData) => {
+    try {
+        const response = await api.put(`${TASK_URL}/${taskId}`, taskData);
+        return response.data.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
+// ... existing updateTaskStatus, createTask ...
+
 const taskService = {
     getTasksByProject,
+    getTasksByMilestone,
     updateTaskStatus,
     createTask,
-    getTasksByMilestone,
-    // Add updateTask, deleteTask here later
+    updateTask, // <--- Export the new function
 };
 
 export default taskService;

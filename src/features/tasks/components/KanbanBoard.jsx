@@ -2,7 +2,8 @@ import React from 'react';
 import { TASK_STATUS_COLUMNS } from '../utils/taskConstants';
 import KanbanColumn from './KanbanColumn';
 
-const KanbanBoard = ({ tasksByStatus, dragHandlers }) => {
+// ... imports
+const KanbanBoard = ({ tasksByStatus, dragHandlers, onTaskClick }) => { // Accept onTaskClick
     return (
         <div className="kanban-board">
             {Object.values(TASK_STATUS_COLUMNS).map(column => (
@@ -13,10 +14,10 @@ const KanbanBoard = ({ tasksByStatus, dragHandlers }) => {
                     tasks={tasksByStatus[column.status]}
                     onDragStart={dragHandlers.onDragStart}
                     onDrop={dragHandlers.onDrop}
+                    onTaskClick={onTaskClick} // Pass it down
                 />
             ))}
         </div>
     );
 };
-
 export default KanbanBoard;

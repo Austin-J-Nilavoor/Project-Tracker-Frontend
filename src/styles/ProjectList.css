@@ -9,8 +9,8 @@
 
 .project-list-header {
     margin-bottom: 2rem;
-    padding-bottom: 0.5rem;
-    border-bottom: 1px solid var(--border-color);
+    /* padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color); */
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -228,3 +228,83 @@
 }
 
 
+.project-list-wrapper {
+    background-color: var(--background-color);
+    padding: 0 2rem;
+    max-width: 80rem;
+    margin: 0 auto;
+    min-height: 100vh;
+}
+
+.project-list-header {
+    /* Removed bottom border from header since tabs handle the separation now */
+    margin-bottom: 1.5rem; 
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.header-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+/* --- NEW TAB STYLES --- */
+.project-tabs-nav {
+    display: flex;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 2rem;
+    gap: 2rem;
+}
+
+.tab-button {
+    background: none;
+    border: none;
+    padding: 0 0.25rem 0.75rem 0.25rem;
+    font-size: 1rem;
+    color: var(--text-medium);
+    font-weight: 500;
+    cursor: pointer;
+    position: relative;
+    transition: all 0.2s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    /* Pull button down 1px so active border overlaps container border */
+    top: 1px; 
+}
+
+.tab-button:hover {
+    color: var(--primary-indigo);
+}
+
+.tab-button.active {
+    color: var(--primary-indigo);
+    font-weight: 600;
+    border-bottom: 2px solid var(--primary-indigo);
+}
+
+.tab-count {
+    font-size: 0.75rem;
+    background-color: #f3f4f6; /* Light gray */
+    color: #6b7280;
+    padding: 0.1rem 0.5rem;
+    border-radius: 999px;
+    border: 1px solid #e5e7eb;
+    transition: all 0.2s ease;
+}
+
+.tab-button.active .tab-count {
+    background-color: #e0e7ff; /* Light indigo */
+    color: var(--primary-indigo);
+    border-color: #c7d2fe;
+}
+
+/* --- Keep Existing Grid Styles --- */
+.project-card-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 1.5rem;
+}
+/* ... (Rest of your existing card styles) ... */

@@ -5,7 +5,6 @@ import CommonHeader from '../components/Header';
 import Breadcrumbs from '../components/BreadCrumbs';
 
 // Feature Components
-import ProjectFilters from '../features/projects/components/ProjectFilters';
 import ProjectGrid from '../features/projects/components/ProjectGrid';
 
 // Modals
@@ -20,40 +19,50 @@ import '../styles/ProjectList.css';
 
 const ProjectList = () => {
     const { user } = useAuth();
-
     const {
         projects,
         loading,
         error,
-        activeFilter,
-        setActiveFilter,
         refreshData
     } = useProjectList();
 
     const [showAddProject, setShowAddProject] = useState(false);
+    const [activeTab, setActiveTab] = useState('active'); // 'active' | 'completed'
 
     // Allow creation for non-EMPLOYEE roles
     const canCreateProject = user?.role !== 'EMPLOYEE';
 
     // ----------------------------------------
-    // ✅ CUSTOM SORTING LOGIC
+    // ✅ DATA PROCESSING
     // ----------------------------------------
-    const sortedProjects = useMemo(() => {
-        if (!projects) return [];
+    const getStatus = (p) => (p.status || 'PENDING');
 
-        const priority = {
-            "IN_PROGRESS": 1,
-            "PENDING": 2,
-            "COMPLETED": 3
-        };
-
-        return [...projects].sort((a, b) => {
-            const statusA = priority[a.status] || 99;
-            const statusB = priority[b.status] || 99;
-            return statusA - statusB;
+    // 1. Active Projects (In Progress + Pending), Sorted by Priority
+    const activeProjects = useMemo(() => {
+        const active = projects.filter(p => getStatus(p) !== 'COMPLETED');
+        
+        // Sort: IN_PROGRESS comes before PENDING
+        return active.sort((a, b) => {
+            const statusA = getStatus(a);
+            const statusB = getStatus(b);
+            
+            if (statusA === statusB) return 0;
+            if (statusA === 'IN_PROGRESS') return -1; // Moves A up
+            if (statusB === 'IN_PROGRESS') return 1;  // Moves B up
+            return 0;
         });
     }, [projects]);
-    // ----------------------------------------
+
+    // 2. Completed Projects
+    const completedProjects = useMemo(() => {
+        return projects.filter(p => getStatus(p) === 'COMPLETED');
+    }, [projects]);
+
+    // Determine which list to show based on tab
+    const currentList = activeTab === 'active' ? activeProjects : completedProjects;
+    const emptyMessage = activeTab === 'active' 
+        ? "No active projects found." 
+        : "No completed projects found.";
 
     return (
         <>
@@ -67,21 +76,44 @@ const ProjectList = () => {
                 <Breadcrumbs />
 
                 <div className="project-list-header">
-                    <h1 className="header-title">Projects Overview</h1>
-
-                    <ProjectFilters
-                        activeFilter={activeFilter}
-                        onFilterChange={setActiveFilter}
-                    />
+                    <h1 className="header-title">My Projects</h1>
                 </div>
 
-                {/* Pass sorted projects to the grid */}
-                <ProjectGrid
-                    projects={sortedProjects}
-                    loading={loading}
-                    error={error}
-                    activeFilter={activeFilter}
-                />
+                {/* --- TAB NAVIGATION --- */}
+                <div className="project-tabs-nav">
+                    <button 
+                        className={`tab-button ${activeTab === 'active' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('active')}
+                    >
+                        Active Projects <span className="tab-count">{activeProjects.length}</span>
+                    </button>
+                    <button 
+                        className={`tab-button ${activeTab === 'completed' ? 'active' : ''}`}
+                        onClick={() => setActiveTab('completed')}
+                    >
+                        Completed Projects <span className="tab-count">{completedProjects.length}</span>
+                    </button>
+                </div>
+
+                {/* --- MAIN CONTENT --- */}
+                {loading ? (
+                    <div className="status-message">Loading projects...</div>
+                ) : error ? (
+                    <div className="error-box">{error}</div>
+                ) : (
+                    <>
+                        {currentList.length === 0 ? (
+                            <p className="status-message">{emptyMessage}</p>
+                        ) : (
+                            <ProjectGrid
+                                projects={currentList}
+                                loading={false}
+                                error={null}
+                                activeFilter="All"
+                            />
+                        )}
+                    </>
+                )}
             </div>
 
             {showAddProject && (

@@ -1,7 +1,51 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Loader, ArrowRight, Circle } from 'lucide-react';
+import { Loader, ArrowRight, Circle, ChevronRight } from 'lucide-react';
 import taskService from '../../../services/taskServices';
+
+const TaskItem = ({ task, onClick }) => {
+    const [isHovered, setIsHovered] = useState(false);
+
+    return (
+        <li 
+            onMouseEnter={() => setIsHovered(true)}
+            onMouseLeave={() => setIsHovered(false)}
+            onClick={onClick}
+            style={{
+                padding: '0.75rem 0.5rem',
+                borderBottom: '1px dashed #e2e8f0',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between', // Space between content and arrow
+                cursor: 'pointer',
+                backgroundColor: isHovered ? '#f8fafc' : 'transparent', // Hover effect
+                transition: 'background-color 0.2s ease',
+                borderRadius: '6px'
+            }}
+        >
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.6rem', overflow: 'hidden' }}>
+                <Circle size={10} fill="#3b82f6" color="#3b82f6" style={{ flexShrink: 0 }} />
+                <span style={{ 
+                    fontSize: '0.85rem', 
+                    color: isHovered ? '#1e293b' : '#334155', // Darken text on hover
+                    lineHeight: '1.4', 
+                    fontWeight: '500',
+                    whiteSpace: 'nowrap',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis'
+                }}>
+                    {task.title}
+                </span>
+            </div>
+            {/* Visual cue pointing to the task */}
+            <ChevronRight 
+                size={14} 
+                color={isHovered ? '#3b82f6' : '#94a3b8'} 
+                style={{ flexShrink: 0, transition: 'color 0.2s' }} 
+            />
+        </li>
+    );
+};
 
 const InProgressTasksWidget = ({ milestones }) => {
     const [tasks, setTasks] = useState([]);
@@ -42,8 +86,12 @@ const InProgressTasksWidget = ({ milestones }) => {
 
     if (!activeMilestone) return null;
 
+    const handleNavigate = () => {
+        navigate(`/projects/${activeMilestone.projectId}/milestones/${activeMilestone.id}/tasks`);
+    };
+
     return (
-        <div className="sidebar-card">
+        <div className="sidebar-card" style={{ display: 'flex', flexDirection: 'column' }}>
             <div className="section-heading">
                 <h3>IN PROGRESS</h3>
             </div>
@@ -52,63 +100,57 @@ const InProgressTasksWidget = ({ milestones }) => {
                 Current Phase: <span style={{ fontWeight: '600', color: '#334155' }}>{activeMilestone.name}</span>
             </div>
 
-            {loading ? (
-                <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94a3b8', fontSize: '0.85rem' }}>
-                   <Loader size={14} className="animate-spin" /> Loading tasks...
-                </div>
-            ) : tasks.length === 0 ? (
-                <p style={{ fontSize: '0.85rem', color: '#94a3b8', fontStyle: 'italic' }}>
-                    No tasks currently in progress.
-                </p>
-            ) : (
-                <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
-                    {tasks.slice(0, 5).map(task => (
-                        <li 
-                            key={task.id} 
-                            style={{
-                                padding: '0.6rem 0',
-                                borderBottom: '1px dashed #e2e8f0',
-                                display: 'flex',
-                                alignItems: 'start',
-                                gap: '0.6rem',
-                                cursor: 'pointer'
-                            }}
-                            // Clicking a task takes you to the board filtered by this milestone
-                            onClick={() => navigate(`/projects/${task.projectId}/milestones/${activeMilestone.id}/tasks`)}
-                        >
-                            <Circle size={10} fill="#3b82f6" color="#3b82f6" style={{ marginTop: '5px', flexShrink: 0 }} />
-                            <span style={{ fontSize: '0.85rem', color: '#334155', lineHeight: '1.4', fontWeight: '500' }}>
-                                {task.title}
-                            </span>
-                        </li>
-                    ))}
-                </ul>
-            )}
+            <div style={{ flexGrow: 1, marginBottom: '1rem' }}>
+                {loading ? (
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '8px', color: '#94a3b8', fontSize: '0.85rem', padding: '1rem 0' }}>
+                       <Loader size={14} className="animate-spin" /> Loading tasks...
+                    </div>
+                ) : tasks.length === 0 ? (
+                    <p style={{ fontSize: '0.85rem', color: '#94a3b8', fontStyle: 'italic', padding: '1rem 0' }}>
+                        No tasks currently in progress.
+                    </p>
+                ) : (
+                    <ul style={{ listStyle: 'none', padding: 0, margin: 0 }}>
+                        {tasks.slice(0, 5).map(task => (
+                            <TaskItem 
+                                key={task.id} 
+                                task={task} 
+                                onClick={handleNavigate} 
+                            />
+                        ))}
+                    </ul>
+                )}
+            </div>
 
-            {tasks.length > 0 && (
-                <button 
-                    style={{
-                        width: '100%',
-                        marginTop: '1rem',
-                        padding: '0.5rem',
-                        background: '#f8fafc',
-                        border: '1px solid #e2e8f0',
-                        borderRadius: '6px',
-                        color: '#475569',
-                        fontSize: '0.75rem',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        display: 'flex',
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                        gap: '4px',
-                        transition: 'all 0.2s'
-                    }}
-                    onClick={() => navigate(`/projects/${activeMilestone.projectId}/milestones/${activeMilestone.id}/tasks`)}
-                >
-                    View Board <ArrowRight size={12}/>
-                </button>
-            )}
+            {/* "Always Forwards" Option: Button is now rendered regardless of task count */}
+            <button 
+                style={{
+                    width: '100%',
+                    marginTop: 'auto', // Pushes button to bottom if container has height
+                    padding: '0.6rem',
+                    background: '#fff',
+                    border: '1px solid #3b82f6',
+                    borderRadius: '6px',
+                    color: '#3b82f6',
+                    fontSize: '0.8rem',
+                    fontWeight: '600',
+                    cursor: 'pointer',
+                    display: 'flex',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '6px',
+                    transition: 'all 0.2s'
+                }}
+                onMouseEnter={(e) => {
+                    e.currentTarget.style.background = '#eff6ff';
+                }}
+                onMouseLeave={(e) => {
+                    e.currentTarget.style.background = '#fff';
+                }}
+                onClick={handleNavigate}
+            >
+                Go to Task Board <ArrowRight size={14}/>
+            </button>
         </div>
     );
 };

@@ -16,6 +16,7 @@ import TeamSidebar from '../features/projects/components/TeamSidebar';
 import AddMemberModal from '../features/projects/modals/AddMemberModal';
 import AddMilestoneModal from '../features/projects/modals/AddMilestoneModal';
 import AddProjectModal from '../features/projects/modals/AddProjectModal';
+import projectMemberService from '../services/membersServices';
 
 import { useProjectDetails } from '../features/projects/hooks/useProjectDetails';
 
@@ -45,7 +46,7 @@ const ProjectDetails = () => {
     const isAssignedProjectManager = members.some(
         m => m.userId === user?.id && m.role === 'PROJECT_MANAGER'
     );
-    
+  
     const canEdit = isAdmin || isAssignedProjectManager;
 
     // --- HANDLERS ---
@@ -58,7 +59,20 @@ const ProjectDetails = () => {
         setShowAddMilestone(false);
         setMilestoneToEdit(null); // Clear selection on close
     };
+const handleRemoveMember = async (memberUserId) => {
+    console.log(memberUserId);
+        if (!window.confirm("Are you sure you want to remove this member from the project?")) {
+            return;
+        }
 
+        try {
+            await projectMemberService.removeMember(projectId, memberUserId);
+            refreshData(); // Reload data to update the list
+        } catch (err) {
+            console.error(err);
+            alert(err.response?.data?.message || "Failed to remove member.");
+        }
+    };
     return (
         <>
             <CommonHeader
@@ -89,10 +103,12 @@ const ProjectDetails = () => {
                         />
                     </div>
 
-                    <TeamSidebar
+                 <TeamSidebar
                         members={members}
                         milestones={milestones}
                         onAddClick={canEdit ? () => setShowAddMember(true) : null}
+                        // Pass the remove handler here
+                        onRemoveClick={canEdit ? handleRemoveMember : null}
                     />
                 </main>
             </div>

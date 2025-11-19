@@ -15,14 +15,15 @@ export const AuthProvider = ({ children }) => {
     const token = localStorage.getItem('token');
     const role = localStorage.getItem('role');
     const name = localStorage.getItem('name');
+    const id = localStorage.getItem('id');
     
-    if (token && role && name) {
+    if (token && role && name && id) {
       try {
         const decoded = jwtDecode(token);
         if (decoded.exp * 1000 < Date.now()) {
           logout(); // Token expired
         } else {
-          setUser({ token, role, name });
+          setUser({ token, role, name, id });
         }
       } catch (e) {
         // Handle case where token is malformed

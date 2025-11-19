@@ -1,30 +1,24 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; // Import Auth Context
-import projectMemberService from '../services/membersServices'; // Import Member Service
+import { useAuth } from '../context/AuthContext'; 
+import projectMemberService from '../services/membersServices'; 
 
-// Shared Components
 import Header from '../components/Header.jsx';
 import Breadcrumbs from '../components/BreadCrumbs.jsx';
-
-// Feature Components
 import KanbanBoard from '../features/tasks/components/KanbanBoard.jsx';
 import AddTaskModal from "../features/tasks/modals/AddTaskModal.jsx";
 import MilestoneProgressBar from '../features/tasks/components/MilestoneProgressBar.jsx';
-
-// Logic Hook
 import { useTaskBoard } from '../features/tasks/hooks/useTaskBoard.js';
 
-// Styles
 import '../styles/TaskBoard.css';
 
 const TaskBoard = () => {
     const { projectId, milestoneId } = useParams();
     const { user } = useAuth();
     const [showModal, setShowModal] = useState(false);
+    const [taskToEdit, setTaskToEdit] = useState(null); // New state for editing
     const [canAddTask, setCanAddTask] = useState(false);
 
-    // Custom Hook
     const {
         tasksByStatus,
         loading,
@@ -33,18 +27,13 @@ const TaskBoard = () => {
         dragHandlers
     } = useTaskBoard(projectId, milestoneId);
 
-    // --- PERMISSION CHECK ---
     useEffect(() => {
         const checkPermission = async () => {
             if (!user) return;
-
-            // 1. Global Role Check (e.g., MANAGER or ADMIN)
             if (user.role === 'MANAGER' || user.role === 'ADMIN') {
                 setCanAddTask(true);
                 return;
             }
-
-            // 2. Project-Specific Role Check
             if (projectId) {
                 try {
                     const members = await projectMemberService.getMembersByProject(projectId);
@@ -53,38 +42,44 @@ const TaskBoard = () => {
                     );
                     setCanAddTask(isProjectManager);
                 } catch (err) {
-                    console.error("Failed to fetch project members for permission check", err);
+                    console.error("Failed check permissions", err);
                     setCanAddTask(false);
                 }
             }
         };
-
         checkPermission();
     }, [user, projectId]);
 
-    if (loading) return <div className="dashboard-wrapper loading-state">Loading Kanban board...</div>;
+    // Handler to open modal for editing
+    const handleTaskClick = (task) => {
+        if (!canAddTask) return; // Or allow view-only mode if you prefer
+        setTaskToEdit(task);
+        setShowModal(true);
+    };
 
-    if (error) {
-        return (
-            <div className="dashboard-wrapper error-state">
-                <div className="error-box">Error: {error}</div>
-            </div>
-        );
-    }
+    // Handler to open modal for creating
+    const handleAddNew = () => {
+        setTaskToEdit(null);
+        setShowModal(true);
+    };
+
+    const handleCloseModal = () => {
+        setShowModal(false);
+        setTaskToEdit(null);
+    };
+
+    if (loading) return <div className="dashboard-wrapper loading-state">Loading Kanban board...</div>;
+    if (error) return <div className="dashboard-wrapper error-state"><div className="error-box">{error}</div></div>;
 
     const boardTitle = milestoneId ? "Milestone Tasks" : "Project Task Board";
 
     return (
         <>
             <Header
-                title={canAddTask ? "Add New Task" : boardTitle} // Show Title if button is hidden
-                // Only pass onClick if authorized, otherwise button is hidden by Header logic (usually)
-                // If Header always shows button, we conditionally pass the handler or null.
-                // Assuming CommonHeader hides button if onClick/title implies action, or we control it here.
-                // Better approach: Pass null to onClick to hide the button if CommonHeader supports it.
-                onClick={canAddTask ? () => setShowModal(true) : null} 
-                btnIcon={canAddTask ? undefined : null} // Hide icon if not auth
-                showSearch={true} // Keep search accessible
+                title={canAddTask ? "Add New Task" : boardTitle} 
+                onClick={canAddTask ? handleAddNew : null} 
+                btnIcon={canAddTask ? undefined : null}
+                showSearch={true}
             />
 
             <div className="task-board-wrapper">
@@ -98,17 +93,18 @@ const TaskBoard = () => {
                 <KanbanBoard
                     tasksByStatus={tasksByStatus}
                     dragHandlers={dragHandlers}
+                    onTaskClick={handleTaskClick} // Pass the click handler
                 />
             </div>
 
-            {/* Render Modal only if authorized and state is true */}
-            {showModal && canAddTask && (
+            {showModal && (
                 <AddTaskModal
                     projectId={projectId} 
                     milestoneID={milestoneId}
                     isOpen={showModal}
-                    onClose={() => setShowModal(false)}
-                    onTaskCreated={fetchTasks}
+                    onClose={handleCloseModal}
+                    onSuccess={fetchTasks} // Renamed prop to match generic usage
+                    taskToEdit={taskToEdit} // Pass the task data
                 />
             )}
         </>

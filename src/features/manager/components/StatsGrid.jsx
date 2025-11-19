@@ -16,8 +16,7 @@ const StatsGrid = ({ counts }) => {
         { title: "Total Projects", value: counts.totalProjects, color: "blue", onClick: () => navigate('/projects') },
         { title: "Active Projects", value: counts.activeProjects, color: "orange", onClick: () => navigate('/projects') },
         { title: "Total Employees", value: counts.totalEmployees, color: "green", onClick: () => navigate('/employees') },
-        { title: "On-Time Completion", value: counts.onTimeCompletion, color: "indigo", onClick: () => console.log('Navigate to Completion Details') },
-    ];
+           ];
 
     return (
         <div className="metrics-grid">
