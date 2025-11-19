@@ -1,0 +1,239 @@
+.split-login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.split-login-container {
+    display: flex;
+    width: 100%;
+    height: 100vh;
+    /* Fill the viewport height */
+    max-width: 1400px;
+    /* Maximize the size of the container on large screens */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+}
+
+/* --- Left Panel: Promotional / Image Background --- */
+.promo-panel {
+    flex: 2;
+    background-image: linear-gradient(rgba(0, 0, 0, 0.5), rgba(0, 0, 0, 0.5)), url('../assets/login-bg.png');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    padding: 3rem;
+    color: var(--bg-white);
+    position: relative;
+}
+
+.promo-content {
+    max-width: 400px;
+}
+
+.promo-content h1 {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+}
+
+.promo-content p {
+    font-size: 1.125rem;
+    line-height: 1.6;
+}
+
+.form-panel-inner {
+    padding: 50px;
+    width: 100%;
+    margin: auto;
+}
+
+/* --- Right Panel: Form --- */
+.form-panel {
+    flex: 3;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: flex-start;
+    /* Align content to the left of the panel */
+    padding: 7rem;
+    background-color: var(--bg-white);
+    /* max-width: 600px;  */
+    margin: 0 auto;
+    /* Center the content block within the panel */
+}
+
+.form-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+}
+
+.form-subtitle {
+    font-size: 1rem;
+    color: var(--text-medium);
+    margin-bottom: 2rem;
+}
+
+/* ----------------------------------------------------------------------- */
+/* FORM STYLING */
+/* ----------------------------------------------------------------------- */
+
+.login-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.form-group {
+    width: 100%;
+}
+
+.form-group label {
+    display: block;
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 0.5rem;
+    font-size: 0.875rem;
+}
+
+.input-with-icon {
+    position: relative;
+}
+
+.input-with-icon input {
+    width: 100%;
+    padding: 12px 40px 12px 15px;
+    /* Added padding for icon */
+    border: 1px solid #d3d3d3;
+    border-radius: 8px;
+    font-size: 1rem;
+    background-color: var(--input-bg);
+    transition: box-shadow 0.2s;
+    outline: none;
+}
+
+.input-with-icon input:focus {
+    box-shadow: 0 0 0 2px var(--primary-blue);
+    background-color: var(--bg-white);
+}
+
+.password-toggle {
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: var(--text-medium);
+    padding: 5px;
+}
+
+.form-options {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+}
+
+.remember-me {
+    color: var(--text-medium);
+    display: flex;
+    align-items: center;
+    gap: 0.4rem;
+}
+
+.forgot-password {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.login-button {
+    width: 100%;
+    padding: 14px 20px;
+    font-weight: 600;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.2s;
+    font-size: 1.1rem;
+    margin-top: 0.5rem;
+}
+
+.btn-primary {
+    background-color: var(--primary-blue);
+    color: var(--bg-white);
+}
+
+.btn-primary:hover:not(:disabled) {
+    background-color: var(--primary-blue-dark);
+}
+
+.login-button:disabled {
+    background-color: #93c5fd;
+    /* Light blue */
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.register-link {
+    text-align: center;
+    margin-top: 2rem;
+    color: var(--text-medium);
+}
+
+.signup-link {
+    color: var(--primary-blue);
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.error-message {
+    padding: 10px;
+    background-color: #fee2e2;
+    color: var(--error-color);
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+}
+
+/* ----------------------------------------------------------------------- */
+/* MEDIA QUERIES (RESPONSIVENESS) */
+/* ----------------------------------------------------------------------- */
+
+@media (max-width: 1024px) {
+    .split-login-container {
+        /* Hide the promotional image panel on smaller desktops/tablets */
+        display: flex;
+        flex-direction: row;
+        width: 100%;
+        height: 100vh;
+        box-shadow: none;
+    }
+
+    .promo-panel {
+        display: none;
+    }
+
+    .form-panel {
+        width: 100%;
+        max-width: 100%;
+        padding: 2rem;
+    }
+}
+
+@media (max-width: 600px) {
+    .form-panel {
+        padding: 1rem;
+    }
+
+    .split-login-wrapper {
+        padding: 0;
+    }
+}

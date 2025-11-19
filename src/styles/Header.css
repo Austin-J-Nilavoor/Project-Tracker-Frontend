@@ -1,0 +1,185 @@
+
+/* Main Header Container */
+.dashboard-header {
+    /* Fixed position recommended for a top bar */
+    position: sticky; 
+    top: 0;
+    width: 100%;
+    z-index: 40;
+
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--bg-white);
+    box-shadow: var(--shadow-md);
+}
+
+/* Logo Section */
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo-icon {
+    height: 1.5rem;
+    width: 1.5rem;
+    color: var(--primary-indigo);
+}
+
+.logo-text {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--text-dark);
+}
+
+/* Right Side Actions (Button, Icons, Profile) */
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.action-icon {
+    height: 1.5rem;
+    width: 1.5rem;
+    color: var(--text-medium);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.action-icon:hover {
+    color: var(--primary-indigo);
+}
+
+/* --- Profile Dropdown --- */
+
+.profile-dropdown {
+    position: relative;
+    z-index: 50;
+}
+
+.user-avatar-button {
+    height: 2.5rem;
+    width: 2.5rem;
+    background-color: var(--primary-indigo);
+    color: var(--bg-white);
+    border-radius: 9999px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+    /* Animation for click feedback */
+    transition: box-shadow 0.1s;
+}
+
+.user-avatar-button:active {
+    box-shadow: 0 0 0 4px rgba(79, 70, 229, 0.4);
+}
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 3.5rem;
+    /* Position below the button */
+    width: 200px;
+    background-color: var(--bg-white);
+    border-radius: 0.5rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+    padding: 0.5rem 0;
+}
+
+.user-info {
+    padding: 0.5rem 1rem;
+    border-bottom: 1px solid var(--border-color);
+    margin-bottom: 0.5rem;
+}
+
+.user-info-name {
+    font-weight: 700;
+    color: var(--text-dark);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.user-info-role {
+    font-size: 0.75rem;
+    color: var(--text-medium);
+}
+
+.menu-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0.5rem 1rem;
+    background: none;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    font-size: 0.875rem;
+    color: var(--text-dark);
+    transition: background-color 0.15s;
+}
+
+.menu-item:hover {
+    background-color: var(--bg-light);
+    color: var(--primary-indigo-dark);
+}
+
+.logout-item {
+    color: var(--error-color);
+}
+
+.logout-item:hover {
+    color: var(--bg-white);
+    /* Change text to white */
+    background-color: var(--error-color);
+    /* Red background on hover */
+}
+
+/* --- Conditional Search Bar --- */
+.header-search-bar {
+    /* Ensures the search bar container has space to grow */
+    flex-grow: 0.6;
+    margin-left: 2rem;
+    margin-right: 2rem;
+}
+
+/* Overriding default search input styling for header integration */
+.header-search-bar .search-input {
+    border: none;
+    background-color: var(--bg-light);
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    border-radius: 0.5rem;
+}
+
+.header-search-bar .search-icon {
+    color: var(--text-medium);
+}
+
+/* --- Media Queries --- */
+@media (max-width: 768px) {
+    .dashboard-header {
+        /* Stack elements vertically on small screens if necessary */
+        flex-wrap: wrap;
+        gap: 0.5rem;
+    }
+
+    /* Hide the complex search bar entirely on mobile for simplicity */
+    .header-search-bar {
+        display: none;
+    }
+
+    .header-actions {
+        order: 3;
+        /* Push actions to the bottom or end */
+        width: auto;
+    }
+}

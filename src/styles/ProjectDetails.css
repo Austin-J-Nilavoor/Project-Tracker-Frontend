@@ -1,0 +1,382 @@
+
+.bg-avatar-default {
+    background-color: #6b7280;
+}
+
+.project-details-wrapper {
+    background-color: var(--bg-light);
+    padding: 0 2rem;
+    max-width: 90rem;
+    margin: 0 auto;
+}
+
+.project-details-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 1.5rem;
+}
+
+.project-title {
+    font-size: 2rem;
+    font-weight: 800;
+    color: var(--text-dark);
+}
+
+.project-header-meta {
+    display: flex;
+    gap: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.project-meta-item {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 1rem;
+    border-radius: 10px;
+    font-size: 0.875rem;
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* Status Tags */
+.status-tag-active {
+    background-color: #d1fae5;
+    color: #059669;
+    /* Green */
+}
+
+.priority-tag-high {
+    background-color: #fdf2c8;
+    color: #b45309;
+    /* Orange */
+}
+
+.member-count {
+    background-color: var(--bg-white);
+    border: 1px solid var(--border-color);
+}
+
+/* --- Main Content Grid --- */
+.details-content-grid {
+    display: grid;
+    grid-template-columns: 2.5fr 1fr;
+    /* Main panel wide, sidebar narrow */
+    gap: 2rem;
+}
+
+/* Project Main Panel (Left) */
+.project-main-panel {
+    background-color: var(--bg-white);
+    padding: 2rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-md);
+    border: 1px solid var(--border-color);
+    margin-bottom: 20px;
+}
+
+.section-heading {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-medium);
+    margin-bottom: 1rem;
+    padding-bottom: 0.5rem;
+    border-bottom: 1px solid var(--border-color);
+    text-transform: uppercase;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.project-description {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 1rem;
+}
+
+.project-dates {
+    font-size: 0.875rem;
+    color: var(--text-medium);
+    margin-bottom: 2rem;
+}
+
+.project-dates span {
+    margin-right: 1.5rem;
+}
+
+/* Progress Metrics Section */
+.progress-metrics-section {
+    margin-bottom: 3rem;
+}
+
+.progress-bar-large {
+    width: 100%;
+    height: 0.6rem;
+    background-color: var(--border-color);
+    border-radius: 9999px;
+    overflow: hidden;
+    margin-bottom: 1rem;
+}
+
+.progress-fill {
+    height: 100%;
+    background-color: var(--primary-indigo);
+    transition: width 0.5s ease-out;
+}
+
+.metric-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 1rem;
+    text-align: center;
+}
+
+.metric-card {
+    padding: 1rem 0;
+    border-right: 1px solid var(--border-color);
+}
+
+.metric-card:last-child {
+    border-right: none;
+}
+
+.metric-card h3 {
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+.metric-card p {
+    font-size: 0.875rem;
+    color: var(--text-medium);
+}
+
+/* ----------------------------------------------------------------------- */
+/* MILESTONES TIMELINE STYLING */
+/* ----------------------------------------------------------------------- */
+
+.milestone-timeline-section {
+    margin-top: 2rem;
+}
+
+.milestone-list {
+    position: relative;
+    padding-left: 0;
+    /* Important for list alignment */
+}
+
+.milestone-item {
+    display: flex;
+    margin-bottom: 2.5rem;
+    /* Increased spacing between items */
+    position: relative;
+}
+
+/* Current Milestone Highlight */
+.milestone-item.is-current .milestone-details .milestone-name {
+    color: var(--primary-indigo-dark);
+}
+
+.milestone-timeline {
+    width: 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+    /* Adjust height slightly for vertical alignment */
+}
+
+.milestone-icon-wrapper {
+    height: 32px;
+    /* Slightly larger icon wrapper */
+    width: 32px;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--bg-white);
+    z-index: 10;
+    flex-shrink: 0;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.milestone-line {
+    width: 2px;
+    background-color: var(--border-color);
+    flex-grow: 1;
+    position: absolute;
+    top: 32px;
+    /* Start below the icon wrapper */
+    bottom: -41px;
+    /* Ensure line connects to the next icon */
+}
+
+/* Milestone Status Styling */
+.milestone-icon {
+    /* Ensure icon color is white inside the wrapper */
+    color: var(--bg-white);
+}
+
+.status-completed .milestone-icon-wrapper {
+    background-color: #059669;
+}
+
+/* Green */
+.status-in-progress .milestone-icon-wrapper {
+    background-color: var(--primary-indigo);
+}
+
+.status-pending .milestone-icon-wrapper,
+.status-not_started .milestone-icon-wrapper {
+    background-color: var(--text-medium);
+}
+
+
+.milestone-details {
+    margin-left: 1rem;
+    padding-top: 1px;
+}
+
+.milestone-name {
+    font-weight: 700;
+    /* Bolder text for phase name */
+    color: var(--text-dark);
+    margin-bottom: 0.2rem;
+}
+
+.milestone-dates {
+    font-size: 0.775rem;
+    color: var(--text-medium);
+    margin-bottom: 0.2rem;
+}
+
+/* Specific status text colors */
+.milestone-status {
+    font-size: 0.775rem;
+    font-weight: 600;
+    /* Bold for status text */
+    text-transform: capitalize;
+    margin-top: 0.1rem;
+}
+
+.status-completed .milestone-status {
+    color: #059669;
+}
+
+.status-in-progress .milestone-status {
+    color: var(--primary-indigo);
+}
+
+.status-pending .milestone-status,
+.status-not_started .milestone-status {
+    color: var(--text-medium);
+}
+
+
+/* --- Project Sidebar (Right Column) --- */
+.project-sidebar {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.sidebar-card {
+    background-color: var(--bg-white);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+.team-members-title {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-medium);
+    margin-top: 1rem;
+    margin-bottom: 0.5rem;
+}
+
+.project-manager-info h4 {
+    font-size: 0.875rem;
+    font-weight: 700;
+    color: var(--text-medium);
+    margin-bottom: 0.5rem;
+}
+
+/* Team Member Avatars (Team Members section) */
+.team-member-avatars {
+    display: flex;
+    align-items: center;
+}
+
+.user-avatar.small {
+    height: 32px;
+    width: 32px;
+    font-size: 0.8rem;
+    margin-right: -8px;
+    /* Overlap effect */
+    border: 2px solid var(--bg-white);
+}
+
+.user-avatar.extra-members {
+    background-color: var(--primary-indigo) !important;
+    color: var(--bg-white) !important;
+    font-weight: 600;
+    z-index: 1;
+}
+
+/* Member Card (For Project Manager display) */
+.member-card {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.75rem 0;
+    border-bottom: 1px solid var(--border-color);
+}
+
+
+.member-name {
+    font-weight: 600;
+}
+
+.member-role,
+.member-email {
+    font-size: 0.875rem;
+    color: var(--text-medium);
+}
+
+.member-details {
+    margin-left: 1rem;
+}
+
+.collapsible-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    cursor: pointer;
+}
+
+/* --- Media Queries --- */
+@media (max-width: 1024px) {
+    .details-content-grid {
+        grid-template-columns: 1fr;
+        /* Stack columns vertically on smaller screens */
+    }
+}
+
+@media (max-width: 640px) {
+    .project-details-wrapper {
+        padding: 1rem;
+    }
+
+    .metric-cards-grid {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 columns for metrics on mobile */
+    }
+
+    .project-header-meta {
+        flex-direction: column;
+        gap: 0.5rem;
+    }
+}

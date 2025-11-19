@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock } from 'lucide-react'; // Padlock icon
+import '../styles/AccessDenied.css';
 
 const AccessDenied = () => {
     const navigate = useNavigate();

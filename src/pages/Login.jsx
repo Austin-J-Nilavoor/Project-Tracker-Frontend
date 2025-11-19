@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from '../../context/AuthContext';
-import authService from '../../services/authServices'; // Corrected filename to standard convention
+import { useAuth } from '../context/AuthContext';
+import authService from '../services/authServices'; // Corrected filename to standard convention
 import { useNavigate } from 'react-router-dom';
 import { Eye, EyeOff } from 'lucide-react'; // Import icons for password toggle
+import '../styles/LoginPage.css'
 
 const Login = () => {
     const { isAuthenticated, login: authLogin, user} = useAuth();
@@ -32,7 +33,7 @@ const Login = () => {
                 navigate('/manager');
                 break;
             case 'EMPLOYEE':
-                navigate('/dashboard'); // Employee typically lands on the main dashboard/task view
+                navigate('/projects'); // Employee typically lands on the main dashboard/task view
                 break;
             default:
                 navigate('/');

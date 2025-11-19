@@ -46,10 +46,20 @@ const createProject = async (projectData) => {
 };
 
 
+const updateProject = async (projectId, projectData) => {
+    try {
+        const response = await api.put(`${PROJECT_URL}/${projectId}`, projectData);
+        return response.data.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const projectService = {
     getAllProjects,
     getProjectById,
     createProject,
+    updateProject,
 };
 
 export default projectService;

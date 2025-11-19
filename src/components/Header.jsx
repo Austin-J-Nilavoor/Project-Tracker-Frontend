@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { Briefcase, Plus, LogOut, Search, Settings } from 'lucide-react';
+import '../styles/Header.css';
 
 /**
  * CommonHeader component provides consistent navigation, logo, and profile actions.

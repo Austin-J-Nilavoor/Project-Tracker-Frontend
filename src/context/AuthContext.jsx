@@ -33,13 +33,14 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
 const login = (authResponse) => {
-  const { token, role, name } = authResponse;
+  const { token, role, name,id } = authResponse;
 
   localStorage.setItem('token', token);
   localStorage.setItem('role', role);
   localStorage.setItem('name', name);
+   localStorage.setItem('id', id);
 
-  setUser({ token, role, name });
+  setUser({ token, role, name, id });
   
   // Role-based navigation
   if (role === 'ADMIN') {
@@ -47,7 +48,7 @@ const login = (authResponse) => {
   } else if (role === 'MANAGER') {
     navigate('/manager');
   } else if (role === 'EMPLOYEE') {
-    navigate('/employee'); // Add employee route if needed
+    navigate('/projects'); // Add employee route if needed
   } else {
     navigate('/'); // Fallback
   }

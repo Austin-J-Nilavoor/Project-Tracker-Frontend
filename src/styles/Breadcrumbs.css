@@ -1,0 +1,57 @@
+/* Breadcrumbs.css */
+.breadcrumbs {
+    padding: 20px 0; /* Add vertical spacing */
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+    font-size: 0.9rem;
+    color: #64748b; /* Slate-500 - Muted Text */
+    /* margin-bottom: 1.5rem; */
+}
+
+.breadcrumb-list {
+    display: flex;
+    align-items: center;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    flex-wrap: wrap;
+}
+
+.breadcrumb-item-wrapper {
+    display: flex;
+    align-items: center;
+}
+
+/* The Separator Icon */
+.breadcrumb-separator {
+    margin: 0 0.5rem;
+    color: #94a3b8; /* Slate-400 */
+}
+
+/* The Links */
+.breadcrumb-link {
+    text-decoration: none;
+    color: #64748b;
+    transition: color 0.2s ease;
+    display: flex;
+    align-items: center;
+}
+
+.breadcrumb-link:hover {
+    color: #2563eb; /* Blue-600 */
+    text-decoration: underline;
+}
+
+/* Home Icon Specifics */
+.home-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding-bottom: 2px; /* Visual alignment fix */
+}
+
+/* The Current (Last) Item */
+.breadcrumb-current {
+    color: #0f172a; /* Slate-900 - Dark/Bold */
+    font-weight: 600;
+    cursor: default;
+}

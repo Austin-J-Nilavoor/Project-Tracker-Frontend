@@ -1,0 +1,328 @@
+.main-content-admin {
+    padding: 2rem;
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.dashboard-wrapper {
+    min-height: 100vh;
+    background-color: var(--background-color);
+    color: var(--text-dark);
+}
+
+/* Header/Navbar */
+/* .dashboard-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 1rem 2rem;
+    background-color: var(--bg-white);
+    box-shadow: var(--shadow-md);
+} */
+
+.logo-section {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.logo-icon {
+    height: 1.5rem;
+    width: 1.5rem;
+    color: var(--primary-indigo);
+}
+
+.logo-text {
+    font-size: 1.25rem;
+    font-weight: bold;
+    color: var(--text-dark);
+}
+
+.header-actions {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+}
+
+.action-icon {
+    height: 1.5rem;
+    width: 1.5rem;
+    color: var(--text-medium);
+    cursor: pointer;
+    transition: color 0.2s;
+}
+
+.user-avatar-button {
+    height: 2.5rem;
+    width: 2.5rem;
+    background-color: var(--primary-indigo);
+    color: var(--bg-white);
+    border-radius: 9999px;
+    font-weight: 600;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border: none;
+    cursor: pointer;
+}
+
+
+
+.greeting-title {
+    font-size: 1.875rem;
+    font-weight: bold;
+    color: var(--text-dark);
+}
+
+.greeting-subtitle {
+    margin-top: 0.25rem;
+    color: var(--text-medium);
+    margin-bottom: 1rem;
+}
+
+.action-bar {
+    display: flex;
+    justify-content: flex-end;
+    gap: 1rem;
+    /* margin-top: 1.5rem; */
+    margin-bottom: 1.5rem;
+}
+
+.admin-sub-actions {
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+}
+
+/* Reusing Button Styles */
+
+.filter-bar-container {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    margin-bottom: 1.5rem;
+    padding: 1rem;
+    background-color: var(--bg-white);
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    align-items: center;
+}
+
+.search-container {
+    position: relative;
+    flex-grow: 1;
+    min-width: 250px;
+}
+
+.search-icon {
+    position: absolute;
+    left: 0.75rem;
+    top: 50%;
+    transform: translateY(-50%);
+    height: 1.25rem;
+    width: 1.25rem;
+    color: var(--text-light);
+}
+
+.search-input {
+    width: 100%;
+    padding: 0.5rem 1rem 0.5rem 2.5rem;
+    font-size: 0.875rem;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    outline: none;
+    transition: 0.2s;
+}
+
+.search-input:focus {
+    border-color: var(--primary-indigo);
+    box-shadow: 0 0 0 1px var(--primary-indigo);
+}
+
+.filter-dropdowns {
+    display: flex;
+    flex-direction: row;
+    gap: 1rem;
+}
+
+.dropdown-container {
+    min-width: 150px;
+}
+
+.dropdown-select {
+    display: block;
+    width: 100%;
+    padding: 0.5rem 2.5rem 0.5rem 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    background-color: var(--bg-white);
+    box-shadow: var(--shadow);
+    appearance: none;
+    cursor: pointer;
+}
+
+/* --- User Table (FIXED LAYOUT) --- */
+.user-table-card {
+    background-color: var(--bg-white);
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-md);
+    overflow: hidden;
+    border: 1px solid var(--border-color);
+}
+
+/* FIX: Define the required CSS Grid structure */
+.grid-cols-user-table {
+    display: grid;
+    /* Desktop grid columns: Name | Email | Role | IBU | Actions */
+    grid-template-columns: 1.5fr 2fr 1fr 1fr 0.5fr;
+    align-items: center;
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.table-header {
+    /* Apply the grid layout explicitly */
+    display: grid;
+    grid-template-columns: 1.5fr 2fr 1fr 1fr 0.5fr;
+    /* Match grid-cols-user-table explicitly */
+
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--text-medium);
+    background-color: var(--bg-light);
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    white-space: nowrap;
+
+    padding-left: 1.5rem;
+    /* Ensure padding matches row padding */
+    padding-right: 1.5rem;
+}
+
+.table-body {
+    display: flex;
+    flex-direction: column;
+}
+
+/* FIX: Ensure user-row uses the grid layout and spacing */
+.user-row {
+    display: grid;
+    grid-template-columns: 1.5fr 2fr 1fr 1fr 0.5fr;
+    /* Match header grid explicitly */
+    align-items: center;
+
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    transition: background-color 0.2s;
+
+    padding-left: 1.5rem;
+    /* Ensure spacing on rows */
+    padding-right: 1.5rem;
+}
+
+.user-row:hover {
+    background-color: #f9faff;
+}
+
+.user-row:last-child {
+    border-bottom: none;
+}
+
+.user-cell {
+    font-size: 0.875rem;
+    color: var(--text-medium);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+}
+
+.user-name-cell {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    font-weight: 500;
+    color: var(--text-dark);
+}
+
+.user-avatar {
+    height: 2rem;
+    width: 2rem;
+    border-radius: 9999px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: 600;
+    font-size: 0.875rem;
+}
+
+/* Action Buttons (Restored from previous step for completeness) */
+.user-actions-cell {
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.75rem;
+}
+
+.action-button {
+    padding: 0.25rem;
+    background: none;
+    border: none;
+    cursor: pointer;
+    border-radius: 9999px;
+    transition: background-color 0.2s;
+}
+
+.action-button:hover {
+    background-color: var(--bg-light);
+}
+
+/* --- Media Queries (Responsiveness) --- */
+@media (max-width: 768px) {
+
+    /* Hide Email column on smaller screens */
+    .table-header span:nth-child(2) {
+        display: none;
+    }
+
+    .user-row>div:nth-child(2) {
+        display: none;
+    }
+
+    /* Mobile grid columns: Name | Role | IBU | Actions */
+    .grid-cols-user-table,
+    .user-row,
+    .table-header {
+        grid-template-columns: 1.5fr 1fr 1fr 0.5fr !important;
+    }
+
+    .main-content {
+        padding: 1rem;
+    }
+
+    .action-bar {
+        flex-direction: column;
+        gap: 0.5rem;
+        align-items: flex-start;
+    }
+
+    .filter-bar-container {
+        flex-direction: column;
+        gap: 0.75rem;
+    }
+
+    .search-container {
+        min-width: 100%;
+    }
+
+    .filter-dropdowns {
+        width: 100%;
+        justify-content: space-between;
+    }
+}
+

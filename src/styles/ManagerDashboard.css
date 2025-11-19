@@ -1,0 +1,412 @@
+.main-content {
+    padding: 0 2rem;
+    max-width: 80rem;
+    margin-left: auto;
+    margin-right: auto;
+}
+/* Main Layout Grid for Manager View */
+.manager-layout {
+    display: flex;
+    flex-direction: column;
+
+}
+.greeting-title {
+    font-size: 1.675rem;
+    font-weight: bold;
+    color: var(--text-dark);
+}
+
+.greeting-subtitle {
+    margin-top: 0.25rem;
+    color: var(--text-medium);
+    margin-bottom: 1rem;
+}
+/* Header Search Input on Dashboard */
+header .search-header {
+    min-width: 280px;
+    margin-right: 1rem;
+}
+
+/* --- Row 1: Metrics Grid --- */
+.metrics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.stat-card {
+    background-color: var(--bg-white);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+.stat-title {
+    font-size: 0.875rem;
+    color: var(--text-medium);
+    margin-bottom: 0.5rem;
+}
+
+.stat-value {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+}
+
+/* --- Row 2: Content Grid (Table + Side Panels) --- */
+.content-grid {
+    display: grid;
+    grid-template-columns: 2fr 1fr;
+    /* Table takes 2 parts, side takes 1 part */
+    gap: 1.5rem;
+    margin-bottom: 20px;
+}
+
+/* Active Projects Panel (Left) */
+.active-projects-panel {
+    background-color: var(--bg-white);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+    overflow: hidden;
+}
+
+.panel-title {
+    font-size: 1.3rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-dark);
+}
+
+/* Project Table Structure */
+.project-table-card {
+    overflow-x: auto;
+}
+
+.grid-cols-project-table {
+    display: grid;
+    /* Project Name | Manager | Progress | Deadline | Status */
+    grid-template-columns: 1.5fr 1fr 1fr 0.7fr 0.7fr;
+    align-items: center;
+    min-width: 700px;
+    /* Ensure minimum width for scrolling on mobile */
+    padding: 1rem 1.5rem;
+    column-gap: 1.5rem;
+}
+
+.table-header .grid-cols-project-table {
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--text-medium);
+    background-color: var(--bg-light);
+    padding-top: 0.75rem;
+    padding-bottom: 0.75rem;
+    border-bottom: 1px solid var(--border-color);
+    /* Remove padding to align with row content */
+    padding-left: 1.5rem;
+    padding-right: 1.5rem;
+}
+
+.project-row {
+    border-top: 1px solid var(--border-color);
+    padding-top: 1rem;
+    padding-bottom: 1rem;
+    transition: background-color 0.15s;
+}
+
+.project-row:hover {
+    background-color: #f9faff;
+}
+
+.project-cell {
+    font-size: 0.875rem;
+    color: var(--text-dark);
+}
+
+.project-manager {
+    color: var(--text-medium);
+}
+
+/* Status Badges */
+.project-status-tag {
+    padding: 0.25rem 0.6rem;
+    border-radius: 0.75rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+}
+
+.status-on-track {
+    background-color: #d1fae5;
+    color: #059669;
+}
+
+/* Green */
+.status-at-risk {
+    background-color: #fffbeb;
+    color: #b45309;
+}
+
+/* Yellow/Orange */
+.status-off-track {
+    background-color: #fee2e2;
+    color: #ef4444;
+}
+
+/* Red */
+/* .status-completed { background-color: #e0f2fe; color: #0284c7; } Blue */
+
+/* Progress Bar */
+.status-indicator-container {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.progress-bar-track {
+    width: 100%;
+    height: 0.4rem;
+    background-color: var(--border-color);
+    border-radius: 9999px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.5s ease-out;
+}
+
+.progress-on-track {
+    background-color: #059669;
+}
+
+.progress-at-risk {
+    background-color: #f59e0b;
+}
+
+.progress-off-track {
+    background-color: #ef4444;
+}
+
+.progress-completed {
+    background-color: #0284c7;
+}
+
+
+/* --- Right Side Panel --- */
+.side-panel-grid {
+    display: flex;
+    flex-direction: column;
+    gap: 1.5rem;
+}
+
+.panel-card {
+    background-color: var(--bg-white);
+    padding: 1.5rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow);
+    border: 1px solid var(--border-color);
+}
+
+.panel-title-small {
+    font-size: 1.125rem;
+    /* lg */
+    font-weight: 600;
+    color: var(--text-dark);
+    margin-bottom: 1rem;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 0.5rem;
+}
+
+/* Deadline List */
+.deadline-list {
+    list-style: none;
+    padding: 0;
+}
+
+.deadline-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.75rem 0;
+    font-size: 0.875rem;
+    border-bottom: 1px dashed var(--border-color);
+}
+
+.deadline-item:last-child {
+    border-bottom: none;
+}
+
+.deadline-date {
+    font-weight: 600;
+    color: var(--text-dark);
+}
+
+/* --- Employee Availability Chart --- */
+.availability-chart-section {
+    display: flex;
+    align-items: center;
+    gap: 1.5rem;
+}
+
+.availability-chart-ring {
+    width: 100px;
+    height: 100px;
+}
+
+.availability-chart-ring svg {
+    transform: rotate(-90deg);
+    /* Start arc at the top */
+}
+
+.chart-ring-bg {
+    stroke: var(--border-color);
+    stroke-width: 10;
+    fill: none;
+}
+
+/* Default style for the arc circle */
+.availability-chart-ring circle:not(.chart-ring-bg) {
+    stroke-width: 10;
+    fill: none;
+    transition: stroke-dashoffset 0.5s ease-in-out;
+}
+
+.chart-ring-available {
+    stroke: #10b981;
+    /* Green */
+}
+
+.chart-ring-on-projects {
+    stroke: #f59e0b;
+    /* Amber/Yellow */
+}
+
+.chart-ring-text {
+    font-size: 24px;
+    font-weight: 700;
+    fill: var(--text-dark);
+    transform: rotate(90deg);
+    /* Counter-rotate text */
+    transform-origin: 50% 50%;
+}
+
+.chart-ring-label {
+    font-size: 10px;
+    fill: var(--text-medium);
+    transform: rotate(90deg);
+    transform-origin: 50% 50%;
+}
+
+.availability-legend {
+    flex-grow: 1;
+    font-size: 0.875rem;
+    color: var(--text-medium);
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+}
+
+.availability-legend div {
+    display: flex;
+    align-items: center;
+}
+
+.legend-dot {
+    display: inline-block;
+    width: 0.5rem;
+    height: 0.5rem;
+    border-radius: 9999px;
+    margin-right: 0.5rem;
+}
+
+.dot-on-projects {
+    background-color: #f59e0b;
+}
+
+.dot-available {
+    background-color: #10b981;
+}
+
+.dot-on-leave {
+    background-color: #f87171;
+}
+
+
+/* --- Media Queries --- */
+@media (max-width: 1024px) {
+    .content-grid {
+        /* Stack the table and side panels vertically on tablets */
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 768px) {
+    .dashboard-header {
+        flex-direction: column;
+        gap: 1rem;
+    }
+
+    .header-actions {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    header .search-header {
+        display: none;
+        /* Hide search bar from header on small mobile */
+    }
+
+    .metrics-grid {
+        grid-template-columns: repeat(2, 1fr);
+        /* 2 columns on mobile */
+    }
+}
+
+@media (max-width: 480px) {
+    .metrics-grid {
+        grid-template-columns: 1fr;
+        /* 1 column on smallest screens */
+    }
+}
+.status-indicator-container {
+    display: flex;
+    align-items: center; 
+    gap: 12px;
+    width: 100%;
+    min-width: 120px;
+}
+
+.progress-bar-track {
+    flex-grow: 1;
+    height: 8px;
+    background-color: #e2e8f0;
+    border-radius: 999px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    height: 100%;
+    border-radius: 9999px;
+    transition: width 0.6s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Status Colors */
+.progress-in-progress { background-color: #3b82f6; } /* Blue */
+.progress-pending { background-color: #f59e0b; }     /* Orange */
+.progress-completed { background-color: #22c55e; }   /* Green */
+.progress-on-hold { background-color: #ef4444; }     /* Red */
+
+/* Percentage Text */
+.status-indicator-container span {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    white-space: nowrap;
+    min-width: 32px;
+    text-align: right;
+}

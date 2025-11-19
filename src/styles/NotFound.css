@@ -1,0 +1,66 @@
+
+.not-found-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 2rem;
+    background-color: var(--background-color); /* Light gray background */
+    width: 100%;
+}
+
+.not-found-card {
+    max-width: 500px;
+    width: 100%;
+    background-color: var(--bg-white);
+    padding: 4rem 2.5rem;
+    border-radius: 0.75rem;
+    box-shadow: var(--shadow-md);
+    text-align: center;
+    border: 1px solid var(--border-color);
+}
+
+.error-code {
+    font-size: 5rem; /* Large 404 text */
+    font-weight: 900;
+    color: var(--primary-blue); /* Blue color from the design */
+    margin-bottom: 0.5rem;
+}
+
+.error-title {
+    font-size: 2rem;
+    font-weight: 700;
+    color: var(--text-dark);
+    margin-bottom: 1.5rem;
+}
+
+.error-message-NF {
+    font-size: 1rem;
+    color: var(--text-medium);
+    margin-bottom: 2rem;
+    line-height: 1.6;
+}
+
+.button-group-404 {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1rem;
+}
+
+.btn-homepage {
+
+    padding: 0.75rem 1.5rem;
+    font-size: 1rem;
+}
+
+
+
+
+/* Mobile adjustments */
+@media (max-width: 600px) {
+    .not-found-card {
+        padding: 2rem 1rem;
+    }
+}
+

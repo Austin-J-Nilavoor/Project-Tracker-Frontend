@@ -24,12 +24,29 @@ const createMilestone = async (data) => {
     return response.data.data;
 };
 
+const getMilestoneById = async (milestoneId) => {
+    try {
+        const response = await api.get(`${MILESTONE_URL}/${milestoneId}`);
+        return response.data.data;
+    } catch (error) {
+        throw error;
+    }
+};
 
+const updateMilestone = async (milestoneId, milestoneData) => {
+    try {
+        const response = await api.put(`${MILESTONE_URL}/${milestoneId}`, milestoneData);
+        return response.data.data;
+    } catch (error) {
+        throw error;
+    }
+};
 
 const milestoneService = {
     getMilestonesByProject,
-    createMilestone
-    // Add createMilestone, updateMilestone, deleteMilestone here later
+    getMilestoneById,
+    createMilestone,
+    updateMilestone,
 };
 
 export default milestoneService;
