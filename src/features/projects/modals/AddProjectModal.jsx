@@ -14,6 +14,7 @@ const AddProjectModal = ({ onClose, onSuccess, projectToEdit = null }) => {
     });
 
     const [isSubmitting, setIsSubmitting] = useState(false);
+    const [error, setError] = useState(null); // New error state
 
     // Determine mode based on prop
     const isEditMode = !!projectToEdit;
@@ -40,12 +41,16 @@ const AddProjectModal = ({ onClose, onSuccess, projectToEdit = null }) => {
             ...prev,
             [name]: value
         }));
+        // Clear error when user modifies input
+        if (error) setError(null);
     };
 
     const handleSubmit = async () => {
+        setError(null); // Clear previous errors
+
         // Basic validation
         if (!formData.name || !formData.startDate || !formData.endDate) {
-            alert("Please fill in the required fields (Name, Start Date, End Date)");
+            setError("Please fill in the required fields (Name, Start Date, End Date)");
             return;
         }
 
@@ -54,11 +59,9 @@ const AddProjectModal = ({ onClose, onSuccess, projectToEdit = null }) => {
             if (isEditMode) {
                 // Update existing project
                 await projectService.updateProject(projectToEdit.id, formData);
-                alert("Project updated successfully!");
             } else {
                 // Create new project
                 await projectService.createProject(formData);
-                alert("Project created successfully!");
             }
 
             // Trigger parent refresh and close modal
@@ -66,7 +69,7 @@ const AddProjectModal = ({ onClose, onSuccess, projectToEdit = null }) => {
             onClose();
         } catch (err) {
             console.error(err);
-            alert(err.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} project`);
+            setError(err.response?.data?.message || `Failed to ${isEditMode ? 'update' : 'create'} project`);
         } finally {
             setIsSubmitting(false);
         }
@@ -78,6 +81,21 @@ const AddProjectModal = ({ onClose, onSuccess, projectToEdit = null }) => {
             <h2 className="modal-title">
                 {isEditMode ? "Edit Project" : "Create New Project"}
             </h2>
+
+            {/* --- Error Section --- */}
+            {error && (
+                <div className="error-message" style={{ 
+                    padding: '10px', 
+                    backgroundColor: '#fee2e2', 
+                    color: '#ef4444', 
+                    borderRadius: '6px', 
+                    fontSize: '0.875rem', 
+                    fontWeight: '500',
+                    marginBottom: '1rem'
+                }}>
+                    {error}
+                </div>
+            )}
 
             <input
                 type="text"

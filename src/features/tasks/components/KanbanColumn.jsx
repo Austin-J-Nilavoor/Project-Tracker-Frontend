@@ -1,7 +1,7 @@
 import React from 'react';
 import TaskCard from './TaskCard';
 
-const KanbanColumn = ({ title, status, tasks, onDragStart, onDrop ,onTaskClick}) => {
+const KanbanColumn = ({ title, status, tasks, onDragStart, onDrop, onTaskClick, currentUser, isProjectManager }) => {
     
     const handleDragOver = (e) => {
         e.preventDefault();
@@ -37,6 +37,8 @@ const KanbanColumn = ({ title, status, tasks, onDragStart, onDrop ,onTaskClick})
                         task={task}
                         onDragStart={onDragStart}
                         onClick={onTaskClick}
+                        currentUser={currentUser} // <--- Pass it here
+                        isProjectManager={isProjectManager}
                     />
                 ))}
             </div>

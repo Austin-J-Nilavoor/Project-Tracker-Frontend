@@ -198,3 +198,63 @@
         padding: 1rem;
     }
 }
+
+/* Error Message */
+.atm-error-message {
+    padding: 10px;
+    background-color: #fee2e2;
+    color: #ef4444;
+    border-radius: 6px;
+    font-size: 0.875rem;
+    font-weight: 500;
+    margin-bottom: 1rem;
+}
+
+/* Date Range Text */
+.atm-date-range {
+    font-size: 0.75rem;
+    color: #64748b;
+    margin-left: 8px;
+    font-weight: normal;
+}
+
+/* Modal Footer Layout */
+.atm-modal-actions {
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    margin-top: 1rem;
+}
+
+.atm-space-between {
+    justify-content: space-between;
+}
+
+.atm-right-buttons {
+    display: flex;
+    gap: 10px;
+}
+
+/* Delete Button */
+.atm-delete-btn {
+    background-color: #ef4444;
+    color: white;
+    border: none;
+    padding: 8px 14px;
+    border-radius: 6px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.875rem;
+    transition: background-color 0.2s;
+}
+
+.atm-delete-btn:hover {
+    background-color: #dc2626;
+}
+.task-card.disabled {
+    opacity: 0.6; /* Makes it look greyed out */
+    cursor: default; /* Removes the "grab" hand cursor */
+    background-color: #f5f5f5; /* Optional: darker background */
+}

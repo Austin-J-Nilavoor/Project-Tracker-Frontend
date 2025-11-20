@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Trash2 } from 'lucide-react'; // Import Trash icon
 import milestoneService from '../../../services/milestoneServices';
 import Modal from '../../../components/Modal';
 
@@ -47,6 +48,21 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
     const projectStart = project?.startDate?.substring(0, 10) || "";
     const projectEnd = project?.endDate?.substring(0, 10) || "";
 
+    // ---- Delete Handler ----
+    const handleDelete = async () => {
+        if (!window.confirm("Are you sure you want to delete this milestone? This action cannot be undone.")) {
+            return;
+        }
+        try {
+            await milestoneService.deleteMilestone(milestoneToEdit.id);
+            onSuccess();
+            onClose();
+        } catch (err) {
+            console.error("Delete failed", err);
+            setError(err.response?.data?.message || "Failed to delete milestone.");
+        }
+    };
+
     // ---- Submit Handler ----
     const handleSubmit = async () => {
         setError(null);
@@ -80,7 +96,7 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
     return (
         <Modal onClose={onClose} className="modal-box-milestone">
             <h3>{isEditMode ? "Edit Milestone" : "Add Milestone"}</h3>
-            {error && <div className="error-message"><strong>Error:</strong> {error}</div>}
+            {error && <div className="error-message"> {error}</div>}
 
             <div className="modal-row">
                 <input
@@ -105,8 +121,8 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
                     <label>Depends On</label>
                     <select
                         className="modal-input"
-                        value={form.dependsOnId}
-                        onChange={e => setForm({ ...form, dependsOnId: e.target.value })}
+                        value={form.dependsOnId || ""}
+                        onChange={e => setForm({ ...form, dependsOnId: e.target.value || null })}
                     >
                         <option value="">None</option>
                         {milestones
@@ -157,11 +173,38 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
                 </div>
             </div>
 
-            <div className="modal-actions">
-                <button className="btn-cancel" onClick={onClose}>Cancel</button>
-                <button className="btn-primary" onClick={handleSubmit}>
-                    {isEditMode ? "Save Changes" : "Add Milestone"}
-                </button>
+            <div className="modal-actions" style={{ justifyContent: isEditMode ? 'space-between' : 'flex-end' }}>
+                {/* Delete Button (Left Aligned) */}
+                {isEditMode && (
+                    <button 
+                        onClick={handleDelete}
+                        style={{
+                            backgroundColor: '#ef4444',
+                            color: 'white',
+                            border: 'none',
+                            padding: '8px 14px',
+                            borderRadius: '6px',
+                            cursor: 'pointer',
+                            display: 'flex',
+                            alignItems: 'center',
+                            gap: '6px',
+                            transition: 'background-color 0.2s'
+                        }}
+                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
+                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ef4444'}
+                        title="Delete Milestone"
+                    >
+                        <Trash2 size={16} /> Delete
+                    </button>
+                )}
+
+                {/* Standard Actions (Right Aligned) */}
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button className="btn-cancel" onClick={onClose}>Cancel</button>
+                    <button className="btn-primary" onClick={handleSubmit}>
+                        {isEditMode ? "Save Changes" : "Add Milestone"}
+                    </button>
+                </div>
             </div>
         </Modal>
     );

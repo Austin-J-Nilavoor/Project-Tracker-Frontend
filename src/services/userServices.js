@@ -55,11 +55,20 @@ const createUser = async (userData) => {
 };
 
 
+const updateUser = async (userId, userData) => {
+    try {
+        const response = await api.put(`${USER_URL}/${userId}`, userData);
+        return response.data.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const userService = {
     getAllUsers,
     deleteUser,
     createUser,
-    // Add updateUser, getUserById here later
+    updateUser, // Export the new function
 };
 
 export default userService;

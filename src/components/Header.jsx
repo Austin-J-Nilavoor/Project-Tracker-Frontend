@@ -1,33 +1,33 @@
 import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext.jsx';
 import { Briefcase, Plus, LogOut, Search, Settings } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import '../styles/Header.css';
 
-/**
- * CommonHeader component provides consistent navigation, logo, and profile actions.
- * @param {Object} props
- * @param {string} props.title - The text for the main button (e.g., "Add New Project").
- * @param {Function} props.onClick - Handler for the main button click.
- * @param {boolean} [props.showSearch=false] - If true, displays a search bar (for pages like TaskBoard/Dashboard).
- */
-const Header = ({ title,btnIcon = <Plus size={18} />, onClick, showSearch = false }) => {
+const Header = ({ title, btnIcon = <Plus size={18} />, onClick, showSearch = false }) => {
     const { user, logout } = useAuth();
     const [showMenu, setShowMenu] = useState(false);
+    const navigate = useNavigate();
 
     const handleLogout = () => {
-        // Simple delay for UX before clearing state
-        setTimeout(() => logout(), 100); 
+        setTimeout(() => logout(), 100);
     };
 
     return (
         <header className="dashboard-header">
+
             {/* LEFT SIDE: Logo and Title */}
-            <div className="logo-section">
+            <div 
+                className="logo-section"
+                onClick={() => navigate('/')}
+                style={{ cursor: "pointer" }}
+                title="Go to Dashboard"
+            >
                 <Briefcase className="logo-icon" />
                 <span className="logo-text">Project Tracker</span>
             </div>
 
-            {/* CENTER: Search Bar (Conditional) */}
+            {/* CENTER: Search Bar */}
             {showSearch && (
                 <div className="search-container header-search-bar">
                     <Search className="search-icon" />
@@ -39,10 +39,8 @@ const Header = ({ title,btnIcon = <Plus size={18} />, onClick, showSearch = fals
                 </div>
             )}
 
-            {/* RIGHT SIDE: Action Button & Profile */}
+            {/* RIGHT SIDE */}
             <div className="header-actions">
-                
-                {/* Dynamic Action Button (if title and onClick are provided) */}
                 {title && onClick && (
                     <button 
                         onClick={onClick}
@@ -53,10 +51,7 @@ const Header = ({ title,btnIcon = <Plus size={18} />, onClick, showSearch = fals
                     </button>
                 )}
 
-                {/* Profile/Settings Icon (Non-functional placeholders) */}
-                {/* <Settings className="action-icon" /> */}
-
-                {/* User Profile Avatar with Clickable Menu */}
+                {/* Profile */}
                 <div className="profile-dropdown">
                     <button 
                         className="user-avatar-button" 
@@ -66,7 +61,6 @@ const Header = ({ title,btnIcon = <Plus size={18} />, onClick, showSearch = fals
                         {user ? user.name.charAt(0).toUpperCase() : 'G'}
                     </button>
 
-                    {/* Dropdown Menu */}
                     {showMenu && (
                         <div className="dropdown-menu">
                             <div className="user-info">

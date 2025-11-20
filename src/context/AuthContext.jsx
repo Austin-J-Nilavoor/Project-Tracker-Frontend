@@ -8,6 +8,8 @@ const AuthContext = createContext(null);
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  // 1. Initialize loading to true
+  const [loading, setLoading] = useState(true); 
   const navigate = useNavigate();
 
   // Load user data from localStorage on initial load
@@ -31,6 +33,8 @@ export const AuthProvider = ({ children }) => {
         logout();
       }
     }
+    // 2. Set loading to false once the check is complete
+    setLoading(false); 
   }, []);
 
 const login = (authResponse) => {
@@ -70,13 +74,14 @@ const login = (authResponse) => {
   const value = useMemo(() => ({
     user,
     isAuthenticated: !!user,
+    loading, // 3. Expose loading state
     login,
     logout,
     hasRole,
     isAdmin: user?.role === 'ADMIN',
     isManager: user?.role === 'MANAGER',
     isEmployee: user?.role === 'EMPLOYEE',
-  }), [user]);
+  }), [user, loading]); // Add loading to dependencies
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 };

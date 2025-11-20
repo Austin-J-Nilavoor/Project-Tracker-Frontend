@@ -21,9 +21,23 @@ const getAllIbus = async () => {
     }
 };
 
+/**
+ * Creates a new IBU.
+ * Calls POST /api/ibus
+ * @param {object} ibuData - { name: string }
+ */
+const createIbu = async (ibuData) => {
+    try {
+        const response = await api.post(IBU_URL, ibuData);
+        return response.data.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const ibuService = {
     getAllIbus,
-    // You can add getIbuDetails, createIbu, etc., here later
+    createIbu, // Export the new function
 };
 
 export default ibuService;

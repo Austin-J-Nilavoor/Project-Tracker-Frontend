@@ -42,11 +42,25 @@ const updateMilestone = async (milestoneId, milestoneData) => {
     }
 };
 
+/**
+ * Deletes a milestone by ID.
+ * Calls DELETE /api/milestones/{milestoneId}
+ * @param {string} milestoneId 
+ */
+const deleteMilestone = async (milestoneId) => {
+    try {
+        await api.delete(`${MILESTONE_URL}/${milestoneId}`);
+    } catch (error) {
+        throw error;
+    }
+};
+
 const milestoneService = {
     getMilestonesByProject,
     getMilestoneById,
     createMilestone,
     updateMilestone,
+    deleteMilestone, // Export the new function
 };
 
 export default milestoneService;

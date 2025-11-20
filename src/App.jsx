@@ -10,11 +10,16 @@ import TaskBoard from './pages/TaskBoard.jsx';
 import AccessDenied from './components/AccessDenied.jsx';
 import NotFound from './components/NotFound.jsx';
 import ProjectList from './pages/ProjectList.jsx';
+
 const ProtectedRoute = ({ children, allowedRoles }) => {
-  const { isAuthenticated, user } = useAuth();
+  const { isAuthenticated, user, loading } = useAuth();
+
+  // 1. Wait for auth check to complete
+  if (loading) {
+    return <div className="dashboard-wrapper loading-state">Loading...</div>;
+  }
 
   if (!isAuthenticated) {
-
     return <Navigate to="/login" replace />;
   }
 
@@ -25,8 +30,14 @@ const ProtectedRoute = ({ children, allowedRoles }) => {
 
   return children;
 };
+
 const RoleBasedRedirect = () => {
-  const { user, isAuthenticated } = useAuth();
+  const { user, isAuthenticated, loading } = useAuth();
+
+  // 2. Wait for auth check here too
+  if (loading) {
+    return <div className="dashboard-wrapper loading-state">Loading...</div>;
+  }
 
   if (!isAuthenticated) {
     return <Navigate to="/login" replace />;
@@ -42,24 +53,17 @@ const RoleBasedRedirect = () => {
 
   return <Navigate to="/login" replace />;
 };
+
 function App() {
   return (
     <>
-
       <Router>
         <AuthProvider>
           <main>
-            {/* {isVisible && <Header
-              title="Add New Project"
-              onClick={() => console.log("Navigate to Project Creation")}
-              showSearch={true}
-            />} */}
-
             <Routes>
               <Route path="/" element={<RoleBasedRedirect />} />
               {/* Public Route */}
               <Route path="/login" element={<Login />} />
-
 
               {/* Protected Routes */}
               <Route path="/manager" element={

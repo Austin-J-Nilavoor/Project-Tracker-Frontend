@@ -19,6 +19,7 @@ import AddProjectModal from '../features/projects/modals/AddProjectModal';
 import projectMemberService from '../services/membersServices';
 
 import { useProjectDetails } from '../features/projects/hooks/useProjectDetails';
+import NotFound from '../components/NotFound';
 
 const ProjectDetails = () => {
     const { projectId } = useParams();
@@ -28,7 +29,7 @@ const ProjectDetails = () => {
     const [showAddMember, setShowAddMember] = useState(false);
     const [showAddMilestone, setShowAddMilestone] = useState(false);
     const [showEditProject, setShowEditProject] = useState(false);
-    
+
     // New State for Editing Milestone
     const [milestoneToEdit, setMilestoneToEdit] = useState(null);
 
@@ -38,7 +39,7 @@ const ProjectDetails = () => {
     } = useProjectDetails(projectId);
 
     if (loading) return <div className="dashboard-wrapper loading-state">Loading...</div>;
-    if (error) return <div className="dashboard-wrapper error-state">{error}</div>;
+    if (error) return <div className="dashboard-wrapper error-state"><NotFound /></div>;
     if (!project) return <div className="dashboard-wrapper">Project not found.</div>;
 
     // --- PERMISSION LOGIC ---
@@ -46,7 +47,7 @@ const ProjectDetails = () => {
     const isAssignedProjectManager = members.some(
         m => m.userId === user?.id && m.role === 'PROJECT_MANAGER'
     );
-  
+
     const canEdit = isAdmin || isAssignedProjectManager;
 
     // --- HANDLERS ---
@@ -59,8 +60,8 @@ const ProjectDetails = () => {
         setShowAddMilestone(false);
         setMilestoneToEdit(null); // Clear selection on close
     };
-const handleRemoveMember = async (memberUserId) => {
-    console.log(memberUserId);
+    const handleRemoveMember = async (memberUserId) => {
+       
         if (!window.confirm("Are you sure you want to remove this member from the project?")) {
             return;
         }
@@ -88,12 +89,12 @@ const handleRemoveMember = async (memberUserId) => {
 
                 <main className="details-content-grid">
                     <div className="project-main-panel">
-                        <ProjectSummary 
-                            project={project} 
-                            milestones={milestones} 
+                        <ProjectSummary
+                            project={project}
+                            milestones={milestones}
                             tasks={tasks}
                         />
-                        
+
                         <MilestoneTimeline
                             milestones={milestones}
                             projectId={projectId}
@@ -103,7 +104,7 @@ const handleRemoveMember = async (memberUserId) => {
                         />
                     </div>
 
-                 <TeamSidebar
+                    <TeamSidebar
                         members={members}
                         milestones={milestones}
                         onAddClick={canEdit ? () => setShowAddMember(true) : null}

@@ -132,12 +132,12 @@ const Login = () => {
                         </div>
                         
                         {/* Remember Me / Forgot Password Row */}
-                        <div className="form-options">
+                        {/* <div className="form-options">
                             <label className="remember-me">
                                 <input type="checkbox" /> Remember me
                             </label>
                             <a href="#" className="forgot-password">Forgot Password?</a>
-                        </div>
+                        </div> */}
                         
                         {/* Submit Button */}
                         <button type="submit" disabled={loading} className="login-button btn-primary">
@@ -145,9 +145,9 @@ const Login = () => {
                         </button>
                     </form>
                     
-                    <p className="register-link">
+                    {/* <p className="register-link">
                         Don't have an account? <a href="#" className="signup-link">Sign Up</a>
-                    </p>
+                    </p> */}
                 </div></div>
             </div>
         </div>

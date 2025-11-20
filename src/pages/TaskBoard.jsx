@@ -1,12 +1,15 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { useAuth } from '../context/AuthContext'; 
-import projectMemberService from '../services/membersServices'; 
+import { useAuth } from '../context/AuthContext';
+import projectMemberService from '../services/membersServices';
+import milestoneService from '../services/milestoneServices';
+import projectService from '../services/projectServices';
 
 import Header from '../components/Header.jsx';
 import Breadcrumbs from '../components/BreadCrumbs.jsx';
 import KanbanBoard from '../features/tasks/components/KanbanBoard.jsx';
 import AddTaskModal from "../features/tasks/modals/AddTaskModal.jsx";
+import AddMilestoneModal from "../features/projects/modals/AddMilestoneModal.jsx";
 import MilestoneProgressBar from '../features/tasks/components/MilestoneProgressBar.jsx';
 import { useTaskBoard } from '../features/tasks/hooks/useTaskBoard.js';
 
@@ -15,10 +18,17 @@ import '../styles/TaskBoard.css';
 const TaskBoard = () => {
     const { projectId, milestoneId } = useParams();
     const { user } = useAuth();
-    const [showModal, setShowModal] = useState(false);
-    const [taskToEdit, setTaskToEdit] = useState(null); // New state for editing
-    const [canAddTask, setCanAddTask] = useState(false);
 
+    // Modal States
+    const [showModal, setShowModal] = useState(false);
+    const [showMilestoneModal, setShowMilestoneModal] = useState(false);
+    const [taskToEdit, setTaskToEdit] = useState(null);
+
+    // Permission & Data States
+    const [canAddTask, setCanAddTask] = useState(false);
+    const [project, setProject] = useState(null);
+    const [milestones, setMilestones] = useState([]);
+const [isProjectManager, setIsProjectManager] = useState(false);
     const {
         tasksByStatus,
         loading,
@@ -27,45 +37,80 @@ const TaskBoard = () => {
         dragHandlers
     } = useTaskBoard(projectId, milestoneId);
 
+    // --- Load Permissions & Project Context ---
     useEffect(() => {
-        const checkPermission = async () => {
-            if (!user) return;
-            if (user.role === 'MANAGER' || user.role === 'ADMIN') {
-                setCanAddTask(true);
-                return;
-            }
-            if (projectId) {
-                try {
+        const loadContext = async () => {
+            if (!user || !projectId) return;
+
+            try {
+                // 1. Check Permissions
+                let hasPerm = false;
+                if (user.role === 'MANAGER' || user.role === 'ADMIN') {
+                    hasPerm = true;
+                } else {
                     const members = await projectMemberService.getMembersByProject(projectId);
                     const isProjectManager = members.some(
                         m => m.userId === user.id && m.role === 'PROJECT_MANAGER'
                     );
-                    setCanAddTask(isProjectManager);
-                } catch (err) {
-                    console.error("Failed check permissions", err);
-                    setCanAddTask(false);
+                    setIsProjectManager(isProjectManager);
+                    hasPerm = isProjectManager;
                 }
+                setCanAddTask(hasPerm);
+
+                // 2. Fetch Project & Milestones (Required for validation logic)
+                const [projData, milestoneData] = await Promise.all([
+                    projectService.getProjectById(projectId),
+                    milestoneService.getMilestonesByProject(projectId)
+                ]);
+
+                setProject(projData);
+                setMilestones(milestoneData || []);
+
+            } catch (err) {
+                console.error("Failed to load task board context", err);
             }
         };
-        checkPermission();
+        loadContext();
     }, [user, projectId]);
 
-    // Handler to open modal for editing
+    // Handler: Click Task Card (Edit)
     const handleTaskClick = (task) => {
-        if (!canAddTask) return; // Or allow view-only mode if you prefer
+        if (!canAddTask) return;
         setTaskToEdit(task);
         setShowModal(true);
     };
 
-    // Handler to open modal for creating
+    // Handler: Click "Add New Task" Button
     const handleAddNew = () => {
-        setTaskToEdit(null);
-        setShowModal(true);
+        // LOGIC: Enforce Milestone Creation
+        if (milestones.length === 0) {
+            alert("Please create a milestone before adding tasks.");
+            setShowMilestoneModal(true);
+        } else {
+            setTaskToEdit(null);
+            setShowModal(true);
+        }
     };
 
     const handleCloseModal = () => {
         setShowModal(false);
         setTaskToEdit(null);
+    };
+
+    // Handler: Successfully Created Milestone
+    const handleMilestoneSuccess = async () => {
+        try {
+            // Refresh milestones
+            const updatedMilestones = await milestoneService.getMilestonesByProject(projectId);
+            setMilestones(updatedMilestones);
+
+            // Close milestone modal and open task modal immediately for smooth flow
+            setShowMilestoneModal(false);
+            setTaskToEdit(null);
+            setShowModal(true);
+        } catch (err) {
+            console.error("Failed to refresh milestones", err);
+        }
     };
 
     if (loading) return <div className="dashboard-wrapper loading-state">Loading Kanban board...</div>;
@@ -76,35 +121,51 @@ const TaskBoard = () => {
     return (
         <>
             <Header
-                title={canAddTask ? "Add New Task" : boardTitle} 
-                onClick={canAddTask ? handleAddNew : null} 
+                title={canAddTask ? "Add New Task" : boardTitle}
+                onClick={canAddTask ? handleAddNew : null}
                 btnIcon={canAddTask ? undefined : null}
                 showSearch={true}
             />
 
             <div className="task-board-wrapper">
                 <Breadcrumbs />
-                
-                <MilestoneProgressBar 
-                    projectId={projectId} 
-                    activeMilestoneId={milestoneId} 
+
+                {/* Key prop forces re-render when milestones change */}
+                <MilestoneProgressBar
+                    key={milestones.length}
+                    projectId={projectId}
+                    activeMilestoneId={milestoneId}
                 />
 
                 <KanbanBoard
                     tasksByStatus={tasksByStatus}
                     dragHandlers={dragHandlers}
-                    onTaskClick={handleTaskClick} // Pass the click handler
+                    onTaskClick={handleTaskClick}
+                    currentUser={user}
+                    isProjectManager={isProjectManager}
                 />
             </div>
 
+            {/* Task Modal */}
             {showModal && (
                 <AddTaskModal
-                    projectId={projectId} 
+                    projectId={projectId}
                     milestoneID={milestoneId}
                     isOpen={showModal}
                     onClose={handleCloseModal}
-                    onSuccess={fetchTasks} // Renamed prop to match generic usage
-                    taskToEdit={taskToEdit} // Pass the task data
+                    onSuccess={fetchTasks}
+                    taskToEdit={taskToEdit}
+                />
+            )}
+
+            {/* Milestone Modal (If needed) */}
+            {showMilestoneModal && (
+                <AddMilestoneModal
+                    projectId={projectId}
+                    project={project}
+                    milestones={milestones}
+                    onClose={() => setShowMilestoneModal(false)}
+                    onSuccess={handleMilestoneSuccess}
                 />
             )}
         </>

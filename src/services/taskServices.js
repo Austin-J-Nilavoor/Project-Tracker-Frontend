@@ -66,12 +66,21 @@ const updateTask = async (taskId, taskData) => {
 
 // ... existing updateTaskStatus, createTask ...
 
+const deleteTask = async (taskId) => {
+    try {
+        await api.delete(`${TASK_URL}/${taskId}`);
+    } catch (error) {
+        throw error;
+    }
+};
+
 const taskService = {
     getTasksByProject,
     getTasksByMilestone,
     updateTaskStatus,
     createTask,
-    updateTask, // <--- Export the new function
+    updateTask,
+    deleteTask, // Export the new function
 };
 
 export default taskService;

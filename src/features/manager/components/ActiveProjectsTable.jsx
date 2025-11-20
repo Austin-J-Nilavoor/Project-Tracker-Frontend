@@ -14,9 +14,9 @@ const StatusIndicator = ({ progress, status }) => {
                 />
             </div>
             {/* Optional: Show percentage text next to bar */}
-            <span style={{ fontSize: '0.7rem', color: '#64748b', marginLeft: 'auto', display: 'block', textAlign: 'right', marginTop: '2px' }}>
+            {/* <span style={{ fontSize: '0.7rem', color: '#64748b', marginLeft: 'auto', display: 'block', textAlign: 'right', marginTop: '2px' }}>
                 {progress}%
-            </span>
+            </span> */}
         </div>
     );
 };

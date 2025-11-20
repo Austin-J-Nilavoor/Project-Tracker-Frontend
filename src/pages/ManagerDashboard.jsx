@@ -72,7 +72,7 @@ const ManagerDashboard = () => {
                  <Breadcrumbs />
                 <h1 className="greeting-title">Welcome, {user.name}! 👋</h1>
                 <p className="greeting-subtitle">
-                    IBU: {metrics ? metrics.ibuName : 'Loading...'}
+                     {metrics ? metrics.ibuName : 'Loading...'}
                 </p>
 
                 {/* Metric Cards */}
