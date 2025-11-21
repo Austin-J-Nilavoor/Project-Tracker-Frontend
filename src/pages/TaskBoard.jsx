@@ -61,6 +61,7 @@ const [isProjectManager, setIsProjectManager] = useState(false);
                 const [projData, milestoneData] = await Promise.all([
                     projectService.getProjectById(projectId),
                     milestoneService.getMilestonesByProject(projectId)
+                    
                 ]);
 
                 setProject(projData);
@@ -75,7 +76,7 @@ const [isProjectManager, setIsProjectManager] = useState(false);
 
     // Handler: Click Task Card (Edit)
     const handleTaskClick = (task) => {
-        if (!canAddTask) return;
+        // if (!canAddTask) return;
         setTaskToEdit(task);
         setShowModal(true);
     };
@@ -124,7 +125,7 @@ const [isProjectManager, setIsProjectManager] = useState(false);
                 title={canAddTask ? "Add New Task" : boardTitle}
                 onClick={canAddTask ? handleAddNew : null}
                 btnIcon={canAddTask ? undefined : null}
-                showSearch={true}
+                // showSearch={true}
             />
 
             <div className="task-board-wrapper">
@@ -155,6 +156,7 @@ const [isProjectManager, setIsProjectManager] = useState(false);
                     onClose={handleCloseModal}
                     onSuccess={fetchTasks}
                     taskToEdit={taskToEdit}
+                    isReadOnly={!canAddTask}
                 />
             )}
 

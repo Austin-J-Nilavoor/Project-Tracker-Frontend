@@ -28,6 +28,7 @@ const ProjectList = () => {
 
     const [showAddProject, setShowAddProject] = useState(false);
     const [activeTab, setActiveTab] = useState('active'); // 'active' | 'completed'
+    const [searchQuery, setSearchQuery] = useState("");
 
     // Allow creation for non-EMPLOYEE roles
     const canCreateProject = user?.role !== 'EMPLOYEE';
@@ -40,12 +41,12 @@ const ProjectList = () => {
     // 1. Active Projects (In Progress + Pending), Sorted by Priority
     const activeProjects = useMemo(() => {
         const active = projects.filter(p => getStatus(p) !== 'COMPLETED');
-        
+
         // Sort: IN_PROGRESS comes before PENDING
         return active.sort((a, b) => {
             const statusA = getStatus(a);
             const statusB = getStatus(b);
-            
+
             if (statusA === statusB) return 0;
             if (statusA === 'IN_PROGRESS') return -1; // Moves A up
             if (statusB === 'IN_PROGRESS') return 1;  // Moves B up
@@ -59,9 +60,18 @@ const ProjectList = () => {
     }, [projects]);
 
     // Determine which list to show based on tab
-    const currentList = activeTab === 'active' ? activeProjects : completedProjects;
-    const emptyMessage = activeTab === 'active' 
-        ? "No active projects found." 
+    // Determine which list to show based on tab
+
+    const filteredList = (activeTab === 'active' ? activeProjects : completedProjects)
+        .filter(p =>
+            p.name?.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            p.description?.toLowerCase().includes(searchQuery.toLowerCase())
+        );
+
+    const currentList = filteredList;
+
+    const emptyMessage = activeTab === 'active'
+        ? "No active projects found."
         : "No completed projects found.";
 
     return (
@@ -70,6 +80,8 @@ const ProjectList = () => {
                 title={canCreateProject ? "Add New Project" : null}
                 onClick={canCreateProject ? () => setShowAddProject(true) : null}
                 showSearch={true}
+                searchQuery={searchQuery}
+                onSearch={(e) => setSearchQuery(e.target.value)}
             />
 
             <div className="project-list-wrapper">
@@ -81,13 +93,13 @@ const ProjectList = () => {
 
                 {/* --- TAB NAVIGATION --- */}
                 <div className="project-tabs-nav">
-                    <button 
+                    <button
                         className={`tab-button ${activeTab === 'active' ? 'active' : ''}`}
                         onClick={() => setActiveTab('active')}
                     >
                         Active Projects <span className="tab-count">{activeProjects.length}</span>
                     </button>
-                    <button 
+                    <button
                         className={`tab-button ${activeTab === 'completed' ? 'active' : ''}`}
                         onClick={() => setActiveTab('completed')}
                     >

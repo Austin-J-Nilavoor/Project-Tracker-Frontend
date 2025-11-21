@@ -33,53 +33,56 @@ const AddMemberModal = ({ projectId, allUsers, onClose, onSuccess }) => {
     };
 
     return (
-       <Modal onClose={onClose}>
-                <h3>Add Member</h3>
+        <Modal onClose={onClose}>
+            <h3>Add Member</h3>
 
-                {/* 4. Error Message UI */}
-                {error && (
-                    <div className="error-message" style={{ 
-                        padding: '10px', 
-                        backgroundColor: '#fee2e2', 
-                        color: '#ef4444', 
-                        borderRadius: '6px', 
-                        fontSize: '0.875rem', 
-                        fontWeight: '500',
-                        marginBottom: '1rem'
-                    }}>
-                        {error}
-                    </div>
-                )}
-
-                <label>User</label>
-                <select 
-                    value={userId} 
-                    onChange={handleUserChange}
-                    className="modal-input" // Added for consistent styling
-                >
-                    <option value="">Select User</option>
-                    {allUsers.map(u => (
-                        <option key={u.id} value={u.id}>
-                            {u.name} ({u.email})
-                        </option>
-                    ))}
-                </select>
-
-                <label>Role</label>
-                <select 
-                    value={role} 
-                    onChange={e => setRole(e.target.value)}
-                    className="modal-input" // Added for consistent styling
-                >
-                    <option value="PROJECT_MANAGER">Project Manager</option>
-                    <option value="DEVELOPER">Developer</option>
-                </select>
-
-                <div className="modal-actions">
-                    <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
-                    <button className="btn btn-primary" onClick={handleSubmit}>Add</button>
+            {/* 4. Error Message UI */}
+            {error && (
+                <div className="error-message" style={{
+                    padding: '10px',
+                    backgroundColor: '#fee2e2',
+                    color: '#ef4444',
+                    borderRadius: '6px',
+                    fontSize: '0.875rem',
+                    fontWeight: '500',
+                    marginBottom: '1rem'
+                }}>
+                    {error}
                 </div>
-           </Modal>
+            )}
+
+            <label>User</label>
+            <select
+                value={userId}
+                onChange={handleUserChange}
+                className="modal-input" // Added for consistent styling
+            >
+                <option value="">Select User</option>
+                {allUsers.map(u => (
+                    <option key={u.id} value={u.id}>
+                        {u.name} ({u.email})
+                    </option>
+                ))}
+            </select>
+
+            <label>Role</label>
+            <select
+                value={role}
+                onChange={e => setRole(e.target.value)}
+                className="modal-input" // Added for consistent styling
+            >
+                <option value="PROJECT_MANAGER">Project Manager</option>
+                <option value="DEVELOPER">Developer</option>
+                <option value="TESTER">Tester</option>
+                <option value="DESIGNER">Designer</option>
+                <option value="ANALYST">Analyst</option>
+            </select>
+
+            <div className="modal-actions">
+                <button className="btn btn-secondary" onClick={onClose}>Cancel</button>
+                <button className="btn btn-primary" onClick={handleSubmit}>Add</button>
+            </div>
+        </Modal>
     );
 };
 

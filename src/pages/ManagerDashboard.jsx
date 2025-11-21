@@ -64,7 +64,7 @@ const ManagerDashboard = () => {
             <Header
                 title="Add New Project"
                 onClick={() => setShowAddProject(true)}
-                showSearch={true}
+                // showSearch={true}
             />
            
 

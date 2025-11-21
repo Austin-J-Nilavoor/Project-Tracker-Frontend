@@ -235,7 +235,9 @@ body {
 .modal-box-milestone {
     width: 500px;
 }
-
+.modal-box-task {
+    width: 800px;
+}
 .modal-title,
 .modal-box h3 {
     font-size: 20px;
@@ -322,9 +324,13 @@ body {
 
 .modal-row {
     display: flex;
-    gap: 10px;
+    gap: 20px;
 }
 
 .modal-col {
     width: 100%;
+}
+
+.modal-textarea-task{
+    height: 118px;
 }

@@ -4,12 +4,13 @@ import UserAvatar from '../../../components/UserAvatar';
 // Import the new widget
 import InProgressTasksWidget from './InProgressTasksWidget';
 
-const MemberItem = ({ name, id, onRemove }) => {
+const MemberItem = ({ name, id, onRemove,role }) => {
     return (
         <div className="member-card">
             <UserAvatar name={name} id={id} />
             <div className="member-details">
                 <p className="member-name">{name}</p>
+                <p className='member-role'>{role}</p>
             </div>
             {onRemove && (
                 <button 
@@ -80,6 +81,7 @@ const TeamSidebar = ({ members, onAddClick, onRemoveClick, milestones }) => {
                                 id={m.userId} 
                                 name={m.userName} 
                                 onRemove={onRemoveClick}
+                                role={m.role}
                             />
                         ))
                     )}

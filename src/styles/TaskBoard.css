@@ -252,6 +252,7 @@
 
 .atm-delete-btn:hover {
     background-color: #dc2626;
+    
 }
 .task-card.disabled {
     opacity: 0.6; /* Makes it look greyed out */

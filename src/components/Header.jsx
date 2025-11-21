@@ -4,10 +4,11 @@ import { Briefcase, Plus, LogOut, Search, Settings } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/Header.css';
 
-const Header = ({ title, btnIcon = <Plus size={18} />, onClick, showSearch = false }) => {
+const Header = ({ title, btnIcon = <Plus size={18} />, onClick, showSearch = false, onSearch, searchQuery }) => {
     const { user, logout } = useAuth();
     const [showMenu, setShowMenu] = useState(false);
     const navigate = useNavigate();
+    
 
     const handleLogout = () => {
         setTimeout(() => logout(), 100);
@@ -17,7 +18,7 @@ const Header = ({ title, btnIcon = <Plus size={18} />, onClick, showSearch = fal
         <header className="dashboard-header">
 
             {/* LEFT SIDE: Logo and Title */}
-            <div 
+            <div
                 className="logo-section"
                 onClick={() => navigate('/')}
                 style={{ cursor: "pointer" }}
@@ -33,8 +34,10 @@ const Header = ({ title, btnIcon = <Plus size={18} />, onClick, showSearch = fal
                     <Search className="search-icon" />
                     <input
                         type="text"
-                        placeholder="Search projects or tasks..."
+                        placeholder="Search projects..."
                         className="search-input"
+                        onChange={onSearch}        // Trigger the search handler
+                        value={searchQuery}
                     />
                 </div>
             )}
@@ -42,7 +45,7 @@ const Header = ({ title, btnIcon = <Plus size={18} />, onClick, showSearch = fal
             {/* RIGHT SIDE */}
             <div className="header-actions">
                 {title && onClick && (
-                    <button 
+                    <button
                         onClick={onClick}
                         className="btn btn-primary"
                     >
@@ -53,8 +56,8 @@ const Header = ({ title, btnIcon = <Plus size={18} />, onClick, showSearch = fal
 
                 {/* Profile */}
                 <div className="profile-dropdown">
-                    <button 
-                        className="user-avatar-button" 
+                    <button
+                        className="user-avatar-button"
                         onClick={() => setShowMenu(!showMenu)}
                         title={user ? user.name : 'Guest'}
                     >

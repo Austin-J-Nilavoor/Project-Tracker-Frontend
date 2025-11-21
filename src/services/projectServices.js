@@ -55,11 +55,26 @@ const updateProject = async (projectId, projectData) => {
     }
 };
 
+/**
+ * Deletes a project by ID.
+ * @param {string} projectId - ID of the project to delete
+ * @returns {Promise<any>} Response data
+ */
+const deleteProject = async (projectId) => {
+    try {
+        const response = await api.delete(`${PROJECT_URL}/${projectId}`);
+        return response.data.data;
+    } catch (error) {
+        throw error;
+    }
+};
+
 const projectService = {
     getAllProjects,
     getProjectById,
     createProject,
     updateProject,
+    deleteProject, // Added here
 };
 
 export default projectService;

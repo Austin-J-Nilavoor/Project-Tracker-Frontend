@@ -60,7 +60,7 @@ export const useAdminDashboard = () => {
 
     // --- Actions ---
     const deleteUser = async (userId) => {
-        if (!window.confirm("Are you sure you want to delete this user?")) return;
+        
         try {
             await userService.deleteUser(userId);
             await fetchData(); // Refresh list

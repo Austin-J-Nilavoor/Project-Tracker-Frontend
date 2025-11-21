@@ -80,7 +80,7 @@ const ProjectDetails = () => {
                 title={canEdit ? "Edit Project" : "Project Details"}
                 btnIcon={canEdit ? <Edit size={18} /> : null}
                 onClick={canEdit ? () => setShowEditProject(true) : null}
-                showSearch={true}
+                // showSearch={true}
             />
 
             <div className="project-details-wrapper">

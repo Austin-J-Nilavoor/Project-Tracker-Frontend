@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import projectService from '../../../services/projectServices';
 import Modal from '../../../components/Modal';
+import { useNavigate } from 'react-router-dom';
 
 const AddProjectModal = ({ onClose, onSuccess, projectToEdit = null }) => {
     // Local state for form inputs
@@ -12,9 +13,9 @@ const AddProjectModal = ({ onClose, onSuccess, projectToEdit = null }) => {
         startDate: "",
         endDate: ""
     });
-
+const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const [error, setError] = useState(null); // New error state
+    const [error, setError] = useState(null);
 
     // Determine mode based on prop
     const isEditMode = !!projectToEdit;
@@ -27,28 +28,47 @@ const AddProjectModal = ({ onClose, onSuccess, projectToEdit = null }) => {
                 description: projectToEdit.description || "",
                 status: projectToEdit.status || "PENDING",
                 priority: projectToEdit.priority || "MEDIUM",
-                // Ensure dates are in YYYY-MM-DD format for input[type="date"]
                 startDate: projectToEdit.startDate ? projectToEdit.startDate.substring(0, 10) : "",
                 endDate: projectToEdit.endDate ? projectToEdit.endDate.substring(0, 10) : ""
             });
         }
     }, [projectToEdit]);
 
-    // Generic handler for input changes
     const handleChange = (e) => {
         const { name, value } = e.target;
         setFormData(prev => ({
             ...prev,
             [name]: value
         }));
-        // Clear error when user modifies input
         if (error) setError(null);
     };
 
-    const handleSubmit = async () => {
-        setError(null); // Clear previous errors
+    // --- NEW: DELETE HANDLER ---
+    const handleDelete = async () => {
+        // 1. Confirmation check
+        if (!window.confirm("Are you sure you want to delete this project? This action cannot be undone.")) {
+            return;
+        }
 
-        // Basic validation
+        setIsSubmitting(true);
+        try {
+            // 2. Call service
+            await projectService.deleteProject(projectToEdit.id);
+            
+            // 3. Handle success
+            if (onSuccess) onSuccess();
+            onClose();
+            navigate('/projects');
+        } catch (err) {
+            console.error(err);
+            setError(err.response?.data?.message || "Failed to delete project");
+            setIsSubmitting(false);
+        }
+    };
+
+    const handleSubmit = async () => {
+        setError(null);
+
         if (!formData.name || !formData.startDate || !formData.endDate) {
             setError("Please fill in the required fields (Name, Start Date, End Date)");
             return;
@@ -57,14 +77,11 @@ const AddProjectModal = ({ onClose, onSuccess, projectToEdit = null }) => {
         setIsSubmitting(true);
         try {
             if (isEditMode) {
-                // Update existing project
                 await projectService.updateProject(projectToEdit.id, formData);
             } else {
-                // Create new project
                 await projectService.createProject(formData);
             }
 
-            // Trigger parent refresh and close modal
             if (onSuccess) onSuccess();
             onClose();
         } catch (err) {
@@ -82,7 +99,6 @@ const AddProjectModal = ({ onClose, onSuccess, projectToEdit = null }) => {
                 {isEditMode ? "Edit Project" : "Create New Project"}
             </h2>
 
-            {/* --- Error Section --- */}
             {error && (
                 <div className="error-message" style={{ 
                     padding: '10px', 
@@ -156,21 +172,53 @@ const AddProjectModal = ({ onClose, onSuccess, projectToEdit = null }) => {
                 onChange={handleChange}
             />
 
-            <div className="modal-actions">
-                <button
-                    className="btn-cancel"
-                    onClick={onClose}
-                    disabled={isSubmitting}
-                >
-                    Cancel
-                </button>
-                <button
-                    className="btn-primary"
-                    onClick={handleSubmit}
-                    disabled={isSubmitting}
-                >
-                    {isSubmitting ? "Saving..." : (isEditMode ? "Save Changes" : "Create")}
-                </button>
+            {/* --- UPDATED ACTIONS FOOTER --- */}
+            <div className="modal-actions" style={{ 
+                display: 'flex', 
+                justifyContent: 'space-between', // Pushes Delete to left, Actions to right
+                alignItems: 'center',
+                marginTop: '20px'
+            }}>
+                
+                {/* LEFT: Delete Button (Only in Edit Mode) */}
+                <div>
+                    {isEditMode && (
+                        <button
+                            className="btn-delete"
+                            onClick={handleDelete}
+                            disabled={isSubmitting}
+                            style={{
+                                backgroundColor: '#ef4444',
+                                color: 'white',
+                                border: 'none',
+                                padding: '8px 16px',
+                                borderRadius: '6px',
+                                cursor: isSubmitting ? 'not-allowed' : 'pointer',
+                                fontWeight: '500'
+                            }}
+                        >
+                            Delete Project
+                        </button>
+                    )}
+                </div>
+
+                {/* RIGHT: Standard Actions */}
+                <div style={{ display: 'flex', gap: '10px' }}>
+                    <button
+                        className="btn-cancel"
+                        onClick={onClose}
+                        disabled={isSubmitting}
+                    >
+                        Cancel
+                    </button>
+                    <button
+                        className="btn-primary"
+                        onClick={handleSubmit}
+                        disabled={isSubmitting}
+                    >
+                        {isSubmitting ? "Saving..." : (isEditMode ? "Save Changes" : "Create")}
+                    </button>
+                </div>
             </div>
         </Modal>
     );

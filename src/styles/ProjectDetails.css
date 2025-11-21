@@ -339,10 +339,14 @@
 .member-name {
     font-weight: 600;
 }
+.member-role {
+    font-weight: 600;
+}
 
 .member-role,
 .member-email {
-    font-size: 0.875rem;
+    padding-top: 5px;
+    font-size: 0.6rem;
     color: var(--text-medium);
 }
 

@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Lock } from 'lucide-react'; // Padlock icon
 import '../styles/AccessDenied.css';
+import Header from './Header';
 
 const AccessDenied = () => {
     const navigate = useNavigate();
@@ -17,36 +18,36 @@ const AccessDenied = () => {
         alert("Please contact your system administrator for access privileges.");
     };
 
-    return (
+    return (<><Header/>
         <div className="access-denied-wrapper">
             <div className="access-denied-card">
                 <div className="icon-lock-wrapper">
                     <Lock size={32} />
                 </div>
-                
+
                 <h1 className="denied-title">Access Denied</h1>
-                
+
                 <p className="denied-message">
-                    You do not have the necessary permissions to view this page. Please 
+                    You do not have the necessary permissions to view this page. Please
                     contact your administrator if you believe this is an an error.
                 </p>
-                
+
                 <div className="button-group">
-                    <button 
-                        className="btn btn-secondary btn-contact-admin" 
+                    <button
+                        className="btn btn-secondary btn-contact-admin"
                         onClick={handleContactAdmin}
                     >
                         Contact Admin...
                     </button>
-                    <button 
-                        className="btn btn-primary" 
+                    <button
+                        className="btn btn-primary"
                         onClick={handleGoToDashboard}
                     >
                         Go to Dashboard
                     </button>
                 </div>
             </div>
-        </div>
+        </div></>
     );
 };
 

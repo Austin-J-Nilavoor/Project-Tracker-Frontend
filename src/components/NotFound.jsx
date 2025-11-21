@@ -1,6 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import '../styles/NotFound.css';
+import Header from './Header';
 const NotFound = () => {
     const navigate = useNavigate();
 
@@ -15,8 +16,9 @@ const NotFound = () => {
         alert("Please contact support at support@projecttracker.com for assistance.");
     };
 
-    return (
+    return (<>  <Header/>
         <div className="not-found-wrapper">
+          
             <div className="not-found-card">
                 
                 <h1 className="error-code">404</h1>
@@ -36,7 +38,7 @@ const NotFound = () => {
                     </button>
                 </div>
             </div>
-        </div>
+        </div></>
     );
 };
 
