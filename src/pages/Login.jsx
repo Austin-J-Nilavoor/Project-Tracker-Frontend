@@ -75,7 +75,7 @@ const Login = () => {
         <div className="split-login-wrapper">
             <div className="split-login-container">
                 
-                {/* Left Panel: Promotional Content and Image */}
+                
                 <div className="promo-panel">
                     <div className="promo-content">
                         <h1>Project Tracker</h1>
@@ -83,7 +83,7 @@ const Login = () => {
                     </div>
                 </div>
 
-                {/* Right Panel: Login Form */}
+            
                 <div className="form-panel">
                     <div className="form-panel-inner">
                     <h2 className="form-title">Welcome Back</h2>
@@ -94,7 +94,7 @@ const Login = () => {
                         {/* Error Message */}
                         {error && <p className="error-message">{error}</p>}
                         
-                        {/* Email Group */}
+                   
                         <div className="form-group">
                             <label htmlFor="email">Email Address</label>
                             <div className="input-with-icon">
@@ -111,7 +111,7 @@ const Login = () => {
                             </div>
                         </div>
 
-                        {/* Password Group */}
+                   
                         <div className="form-group">
                             <label htmlFor="password">Password</label>
                             <div className="input-with-icon">
@@ -131,23 +131,13 @@ const Login = () => {
                             </div>
                         </div>
                         
-                        {/* Remember Me / Forgot Password Row */}
-                        {/* <div className="form-options">
-                            <label className="remember-me">
-                                <input type="checkbox" /> Remember me
-                            </label>
-                            <a href="#" className="forgot-password">Forgot Password?</a>
-                        </div> */}
-                        
-                        {/* Submit Button */}
+          
                         <button type="submit" disabled={loading} className="login-button btn-primary">
                             {loading ? 'Signing In...' : 'Sign In'}
                         </button>
                     </form>
                     
-                    {/* <p className="register-link">
-                        Don't have an account? <a href="#" className="signup-link">Sign Up</a>
-                    </p> */}
+                
                 </div></div>
             </div>
         </div>

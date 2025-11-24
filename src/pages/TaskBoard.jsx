@@ -7,11 +7,11 @@ import projectService from '../services/projectServices';
 
 import Header from '../components/Header.jsx';
 import Breadcrumbs from '../components/BreadCrumbs.jsx';
-import KanbanBoard from '../features/tasks/components/KanbanBoard.jsx';
-import AddTaskModal from "../features/tasks/modals/AddTaskModal.jsx";
-import AddMilestoneModal from "../features/projects/modals/AddMilestoneModal.jsx";
-import MilestoneProgressBar from '../features/tasks/components/MilestoneProgressBar.jsx';
-import { useTaskBoard } from '../features/tasks/hooks/useTaskBoard.js';
+import KanbanBoard from '../layouts/tasks/KanbanBoard.jsx';
+import AddTaskModal from "../modals/AddTaskModal.jsx";
+import AddMilestoneModal from "../modals/AddMilestoneModal.jsx";
+import MilestoneProgressBar from '../layouts/tasks/MilestoneProgressBar.jsx';
+import { useTaskBoard } from '../hooks/useTaskBoard.js';
 
 import '../styles/TaskBoard.css';
 

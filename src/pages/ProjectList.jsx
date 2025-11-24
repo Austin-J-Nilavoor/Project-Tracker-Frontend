@@ -5,13 +5,13 @@ import CommonHeader from '../components/Header';
 import Breadcrumbs from '../components/BreadCrumbs';
 
 // Feature Components
-import ProjectGrid from '../features/projects/components/ProjectGrid';
+import ProjectGrid from '../layouts/projects/ProjectGrid';
 
 // Modals
-import AddProjectModal from '../features/projects/modals/AddProjectModal';
+import AddProjectModal from '../modals/AddProjectModal';
 
 // Logic Hook
-import { useProjectList } from '../features/projects/hooks/useProjectList';
+import { useProjectList } from '../hooks/useProjectList';
 import { useAuth } from '../context/AuthContext';
 
 // Styles

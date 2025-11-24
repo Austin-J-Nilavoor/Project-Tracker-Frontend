@@ -4,15 +4,15 @@ import '../styles/ManagerDashboard.css';
 import { formatDayMonth } from '../utils/dateFormater';
 
 // Hook
-import { useManagerDashboard } from '../features/manager/hooks/useManagerDashboard';
+import { useManagerDashboard } from '../hooks/useManagerDashboard';
 
 // Components
 import Header from '../components/Header';
 import Breadcrumbs from '../components/BreadCrumbs';
-import StatsGrid from '../features/manager/components/StatsGrid';
-import ActiveProjectsTable from '../features/manager/components/ActiveProjectsTable';
-import AvailabilityChart from '../features/manager/components/AvailabilityChart';
-import AddProjectModal from '../features/projects/modals/AddProjectModal';
+import StatsGrid from '../layouts/manager/StatsGrid';
+import ActiveProjectsTable from '../layouts/manager/ActiveProjectsTable';
+import AvailabilityChart from '../layouts/manager/AvailabilityChart';
+import AddProjectModal from '../modals/AddProjectModal';
 
 const UpcomingDeadlines = ({ deadlines }) => (
     <div className="panel-card deadlines-card">

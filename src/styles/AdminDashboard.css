@@ -276,6 +276,13 @@
 
 /* --- Media Queries (Responsiveness) --- */
 @media (max-width: 768px) {
+    .admin-sub-actions p {
+        display: none;
+    }
+
+    .action-bar {
+        flex-direction: row;
+    }
 
     /* Hide Email column on smaller screens */
     .table-header span:nth-child(2) {
@@ -297,8 +304,12 @@
         padding: 1rem;
     }
 
+    .greeting-title{
+        font-size: 0.5rem;
+    }
+
     .action-bar {
-        flex-direction: column;
+        /* flex-direction: column; */
         gap: 0.5rem;
         align-items: flex-start;
     }
@@ -317,4 +328,3 @@
         justify-content: space-between;
     }
 }
-

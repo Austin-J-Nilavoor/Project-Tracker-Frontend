@@ -2,12 +2,12 @@ import React, { useState } from 'react';
 import { useAuth } from '../context/AuthContext';
 import { User, Plus } from 'lucide-react';
 import '../styles/AdminDashboard.css';
-import { useAdminDashboard } from '../features/admin/hooks/useAdminDashboard';
+import { useAdminDashboard } from '../hooks/useAdminDashboard';
 import CommonHeader from '../components/Header';
-import UserFilters from '../features/admin/components/UserFilters';
-import UserTable from '../features/admin/components/UserTable';
-import CreateUserModal from '../features/admin/modals/CreateUserModal';
-import CreateIbuModal from '../features/admin/modals/CreateIbuModal'; // Import
+import UserFilters from '../layouts/admin/UserFilters';
+import UserTable from '../layouts/admin/UserTable';
+import CreateUserModal from '../modals/CreateUserModal';
+import CreateIbuModal from '../modals/CreateIbuModal'; // Import
 import ConfirmationModal from '../components/ConfirmationModal';
 
 const AdminDashboard = () => {

@@ -7,8 +7,8 @@ import AdminDashboard from './pages/AdminDashboard.jsx';
 import ManagerDashboard from './pages/ManagerDashboard.jsx';
 import ProjectDetails from './pages/ProjectDetails.jsx';
 import TaskBoard from './pages/TaskBoard.jsx';
-import AccessDenied from './components/AccessDenied.jsx';
-import NotFound from './components/NotFound.jsx';
+import AccessDenied from './pages/AccessDenied.jsx';
+import NotFound from './pages/NotFound.jsx';
 import ProjectList from './pages/ProjectList.jsx';
 
 const ProtectedRoute = ({ children, allowedRoles }) => {

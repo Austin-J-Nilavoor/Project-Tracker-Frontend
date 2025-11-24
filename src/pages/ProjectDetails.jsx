@@ -9,17 +9,17 @@ import Breadcrumbs from '../components/BreadCrumbs';
 import '../styles/ProjectDetails.css';
 
 // Feature Components
-import ProjectHeader from '../features/projects/components/ProjectHeader';
-import ProjectSummary from '../features/projects/components/ProjectSummary';
-import MilestoneTimeline from '../features/projects/components/MilestoneTimeline';
-import TeamSidebar from '../features/projects/components/TeamSidebar';
-import AddMemberModal from '../features/projects/modals/AddMemberModal';
-import AddMilestoneModal from '../features/projects/modals/AddMilestoneModal';
-import AddProjectModal from '../features/projects/modals/AddProjectModal';
+import ProjectHeader from '../layouts/projects/ProjectHeader';
+import ProjectSummary from '../layouts/projects/ProjectSummary';
+import MilestoneTimeline from '../layouts/projects/MilestoneTimeline';
+import TeamSidebar from '../layouts/projects/TeamSidebar';
+import AddMemberModal from '../modals/AddMemberModal';
+import AddMilestoneModal from '../modals/AddMilestoneModal';
+import AddProjectModal from '../modals/AddProjectModal';
 import projectMemberService from '../services/membersServices';
 
-import { useProjectDetails } from '../features/projects/hooks/useProjectDetails';
-import NotFound from '../components/NotFound';
+import { useProjectDetails } from '../hooks/useProjectDetails';
+import NotFound from './NotFound';
 
 const ProjectDetails = () => {
     const { projectId } = useParams();
