@@ -3,8 +3,9 @@ import projectService from '../services/projectServices';
 import Modal from '../components/Modal';
 import { useNavigate } from 'react-router-dom';
 
+// import './AddProjectModal.css'; // External styles if needed
+
 const AddProjectModal = ({ onClose, onSuccess, projectToEdit = null }) => {
-    // Local state for form inputs
     const [formData, setFormData] = useState({
         name: "",
         description: "",
@@ -13,14 +14,19 @@ const AddProjectModal = ({ onClose, onSuccess, projectToEdit = null }) => {
         startDate: "",
         endDate: ""
     });
-const navigate = useNavigate();
+
+    const [touched, setTouched] = useState({
+        name: false,
+        startDate: false,
+        endDate: false,
+    });
+
+    const navigate = useNavigate();
     const [isSubmitting, setIsSubmitting] = useState(false);
     const [error, setError] = useState(null);
 
-    // Determine mode based on prop
     const isEditMode = !!projectToEdit;
 
-    // Pre-fill form if in Edit Mode
     useEffect(() => {
         if (projectToEdit) {
             setFormData({
@@ -43,19 +49,19 @@ const navigate = useNavigate();
         if (error) setError(null);
     };
 
-    // --- NEW: DELETE HANDLER ---
+    const handleBlur = (e) => {
+        const { name } = e.target;
+        setTouched(prev => ({ ...prev, [name]: true }));
+    };
+
     const handleDelete = async () => {
-        // 1. Confirmation check
         if (!window.confirm("Are you sure you want to delete this project? This action cannot be undone.")) {
             return;
         }
 
         setIsSubmitting(true);
         try {
-            // 2. Call service
             await projectService.deleteProject(projectToEdit.id);
-            
-            // 3. Handle success
             if (onSuccess) onSuccess();
             onClose();
             navigate('/projects');
@@ -68,6 +74,8 @@ const navigate = useNavigate();
 
     const handleSubmit = async () => {
         setError(null);
+
+        setTouched({ name: true, startDate: true, endDate: true });
 
         if (!formData.name || !formData.startDate || !formData.endDate) {
             setError("Please fill in the required fields (Name, Start Date, End Date)");
@@ -93,117 +101,129 @@ const navigate = useNavigate();
     };
 
     return (
-        <Modal onClose={onClose}>
+        <Modal onClose={onClose} className="modal-box-task">
 
             <h2 className="modal-title">
                 {isEditMode ? "Edit Project" : "Create New Project"}
             </h2>
 
-            {error && (
-                <div className="error-message" style={{ 
-                    padding: '10px', 
-                    backgroundColor: '#fee2e2', 
-                    color: '#ef4444', 
-                    borderRadius: '6px', 
-                    fontSize: '0.875rem', 
-                    fontWeight: '500',
-                    marginBottom: '1rem'
-                }}>
+            {/* {error && (
+                <div className="error-message-box">
                     {error}
                 </div>
-            )}
+            )} */}
 
-            <input
-                type="text"
-                name="name"
-                placeholder="Project Name"
-                className="modal-input"
-                value={formData.name}
-                onChange={handleChange}
-            />
+            <div className="modal-row">
 
-            <textarea
-                name="description"
-                placeholder="Description"
-                className="modal-textarea"
-                value={formData.description}
-                onChange={handleChange}
-            />
+                <div className="modal-col">
+                    <label className="required-label">
+                        Project Name
+                        {touched.name && !formData.name && (
+                            <span className="required-text">&nbsp;Required</span>
+                        )}
+                    </label>
 
-            <div className="modal-row" style={{ display: 'flex', gap: '10px' }}>
-                <select
-                    name="status"
-                    className="modal-input"
-                    value={formData.status}
-                    onChange={handleChange}
-                >
-                    <option value="PENDING">PENDING</option>
-                    <option value="IN_PROGRESS">IN PROGRESS</option>
-                    <option value="COMPLETED">COMPLETED</option>
-                </select>
+                    <input
+                        type="text"
+                        name="name"
+                        placeholder="Project Name"
+                        className="modal-input"
+                        value={formData.name}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                    />
 
-                <select
-                    name="priority"
-                    className="modal-input"
-                    value={formData.priority}
-                    onChange={handleChange}
-                >
-                    <option value="LOW">LOW</option>
-                    <option value="MEDIUM">MEDIUM</option>
-                    <option value="HIGH">HIGH</option>
-                </select>
+                    <label className="required-label">Status</label>
+                    <select
+                        name="status"
+                        className="modal-input"
+                        value={formData.status}
+                        onChange={handleChange}
+                    >
+                        <option value="PENDING">PENDING</option>
+                        <option value="IN_PROGRESS">IN PROGRESS</option>
+                        <option value="COMPLETED">COMPLETED</option>
+                    </select>
+
+                    <label className="required-label">Priority</label>
+                    <select
+                        name="priority"
+                        className="modal-input"
+                        value={formData.priority}
+                        onChange={handleChange}
+                    >
+                        <option value="LOW">LOW</option>
+                        <option value="MEDIUM">MEDIUM</option>
+                        <option value="HIGH">HIGH</option>
+                    </select>
+                </div>
+
+                <div className="modal-col">
+                    <label>Description</label>
+                    <textarea
+                        name="description"
+                        placeholder="Description"
+                        className="modal-textarea modal-textarea-flex"
+                        value={formData.description}
+                        onChange={handleChange}
+                    ></textarea>
+                </div>
+
             </div>
 
-            <label>Start Date</label>
-            <input
-                type="date"
-                name="startDate"
-                className="modal-input"
-                value={formData.startDate}
-                onChange={handleChange}
-            />
+            <div className="modal-row">
+                <div className="modal-col">
+                    <label className="required-label">
+                        Start Date
+                        {touched.startDate && !formData.startDate && (
+                            <span className="required-text">&nbsp;Required</span>
+                        )}
+                    </label>
 
-            <label>End Date</label>
-            <input
-                type="date"
-                name="endDate"
-                className="modal-input"
-                value={formData.endDate}
-                onChange={handleChange}
-            />
+                    <input
+                        type="date"
+                        name="startDate"
+                        className="modal-input"
+                        value={formData.startDate}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                         min={new Date().toISOString().split("T")[0]}
+                    />
+                </div>
 
-            {/* --- UPDATED ACTIONS FOOTER --- */}
-            <div className="modal-actions" style={{ 
-                display: 'flex', 
-                justifyContent: 'space-between', // Pushes Delete to left, Actions to right
-                alignItems: 'center',
-                marginTop: '20px'
-            }}>
-                
-                {/* LEFT: Delete Button (Only in Edit Mode) */}
+                <div className="modal-col">
+                    <label className="required-label">
+                        End Date
+                        {touched.endDate && !formData.endDate && (
+                            <span className="required-text">&nbsp;Required</span>
+                        )}
+                    </label>
+
+                    <input
+                        type="date"
+                        name="endDate"
+                        className="modal-input"
+                        value={formData.endDate}
+                        onChange={handleChange}
+                        onBlur={handleBlur}
+                    />
+                </div>
+            </div>
+
+            <div className="modal-actions">
                 <div>
                     {isEditMode && (
                         <button
                             className="btn-delete"
                             onClick={handleDelete}
                             disabled={isSubmitting}
-                            style={{
-                                backgroundColor: '#ef4444',
-                                color: 'white',
-                                border: 'none',
-                                padding: '8px 16px',
-                                borderRadius: '6px',
-                                cursor: isSubmitting ? 'not-allowed' : 'pointer',
-                                fontWeight: '500'
-                            }}
                         >
                             Delete Project
                         </button>
                     )}
                 </div>
 
-                {/* RIGHT: Standard Actions */}
-                <div style={{ display: 'flex', gap: '10px' }}>
+                <div className="right-actions">
                     <button
                         className="btn-cancel"
                         onClick={onClose}
@@ -220,6 +240,7 @@ const navigate = useNavigate();
                     </button>
                 </div>
             </div>
+
         </Modal>
     );
 };

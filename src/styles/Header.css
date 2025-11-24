@@ -166,12 +166,21 @@
 
 /* --- Media Queries --- */
 @media (max-width: 768px) {
+    .search-container{
+        display: none;
+    }
+    .logo-section svg{
+        display: none;
+    }
     .dashboard-header {
         /* Stack elements vertically on small screens if necessary */
         flex-wrap: wrap;
         gap: 0.5rem;
+        flex-direction: row;
     }
-
+.btn span{
+    display: none;
+}
     /* Hide the complex search bar entirely on mobile for simplicity */
     .header-search-bar {
         display: none;
@@ -180,6 +189,7 @@
     .header-actions {
         order: 3;
         /* Push actions to the bottom or end */
+        justify-content: right;
         width: auto;
     }
 }

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Trash2 } from 'lucide-react'; // Import Trash icon
+import { Trash2 } from 'lucide-react';
 import milestoneService from '../services/milestoneServices';
 import Modal from '../components/Modal';
 
@@ -15,9 +15,16 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
     });
 
     const [error, setError] = useState(null);
+
+    const [fieldErrors, setFieldErrors] = useState({
+        name: "",
+        description: "",
+        startDate: "",
+        endDate: ""
+    });
+
     const isEditMode = !!milestoneToEdit;
 
-    // Pre-fill form if editing
     useEffect(() => {
         if (milestoneToEdit) {
             setForm({
@@ -31,28 +38,24 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
         }
     }, [milestoneToEdit]);
 
-    // Auto-fill start date with dependency endDate
     useEffect(() => {
         if (!isEditMode && form.dependsOnId) {
             const parent = milestones.find(m => m.id === form.dependsOnId);
             if (parent?.endDate) {
                 setForm(prev => ({
                     ...prev,
-                    startDate: parent.endDate.substring(0, 10) // force YYYY-MM-DD
+                    startDate: parent.endDate.substring(0, 10)
                 }));
             }
         }
     }, [form.dependsOnId, milestones, isEditMode]);
 
-    // ---- Project Date Constraint Values ----
     const projectStart = project?.startDate?.substring(0, 10) || "";
     const projectEnd = project?.endDate?.substring(0, 10) || "";
 
-    // ---- Delete Handler ----
     const handleDelete = async () => {
-        if (!window.confirm("Are you sure you want to delete this milestone? This action cannot be undone.")) {
-            return;
-        }
+        if (!window.confirm("Are you sure you want to delete this milestone?")) return;
+
         try {
             await milestoneService.deleteMilestone(milestoneToEdit.id);
             onSuccess();
@@ -63,21 +66,35 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
         }
     };
 
-    // ---- Submit Handler ----
     const handleSubmit = async () => {
         setError(null);
 
-        // VALIDATION SECTION ----------------------
+        let newErrors = { name: "", description: "", startDate: "", endDate: "" };
+
+        if (!form.name.trim()) newErrors.name = "Required";
+        if (!form.description.trim()) newErrors.description = "Required";
+        if (!form.startDate) newErrors.startDate = "Required";
+        if (!form.endDate) newErrors.endDate = "Required";
+
+        if (Object.values(newErrors).some(err => err)) {
+            setFieldErrors(newErrors);
+            return;
+        }
+
+        setFieldErrors({ name: "", description: "", startDate: "", endDate: "" });
+
         if (form.startDate < projectStart) {
-            return setError(`Start date cannot be before project start date: ${projectStart}`);
+            setFieldErrors(prev => ({ ...prev, startDate: "Before project start" }));
+            return;
         }
         if (form.endDate > projectEnd) {
-            return setError(`End date cannot be after project end date: ${projectEnd}`);
+            setFieldErrors(prev => ({ ...prev, endDate: "After project end" }));
+            return;
         }
         if (form.endDate < form.startDate) {
-            return setError("End date cannot be earlier than start date.");
+            setFieldErrors(prev => ({ ...prev, endDate: "Before start date" }));
+            return;
         }
-        // ------------------------------------------
 
         try {
             if (isEditMode) {
@@ -96,24 +113,36 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
     return (
         <Modal onClose={onClose} className="modal-box-milestone">
             <h3>{isEditMode ? "Edit Milestone" : "Add Milestone"}</h3>
-            {error && <div className="error-message"> {error}</div>}
+            {error && <div className="error-message">{error}</div>}
 
             <div className="modal-row">
-                <input
-                    type="text"
-                    placeholder="Milestone Name"
-                    className="modal-input"
-                    value={form.name}
-                    onChange={e => setForm({ ...form, name: e.target.value })}
-                />
+                <div className="modal-col">
+                    <label className="required-label">
+                        Milestone Name
+                        {fieldErrors.name && <span className="field-error-inline">{fieldErrors.name}</span>}
+                    </label>
+                    <input
+                        type="text"
+                        placeholder="Milestone Name"
+                        className="modal-input"
+                        value={form.name}
+                        onChange={e => setForm({ ...form, name: e.target.value })}
+                    />
+                </div>
 
-                <input
-                    type="text"
-                    placeholder="Description"
-                    className="modal-input"
-                    value={form.description}
-                    onChange={e => setForm({ ...form, description: e.target.value })}
-                />
+                <div className="modal-col">
+                    <label className="required-label">
+                        Description
+                        {fieldErrors.description && <span className="field-error-inline">{fieldErrors.description}</span>}
+                    </label>
+                    <input
+                        type="text"
+                        placeholder="Description"
+                        className="modal-input"
+                        value={form.description}
+                        onChange={e => setForm({ ...form, description: e.target.value })}
+                    />
+                </div>
             </div>
 
             <div className="modal-row">
@@ -125,10 +154,8 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
                         onChange={e => setForm({ ...form, dependsOnId: e.target.value || null })}
                     >
                         <option value="">None</option>
-                        {milestones
-                            .filter(m => m.id !== milestoneToEdit?.id)
-                            .map(m => <option key={m.id} value={m.id}>{m.name}</option>)
-                        }
+                        {milestones.filter(m => m.id !== milestoneToEdit?.id)
+                            .map(m => <option key={m.id} value={m.id}>{m.name}</option>)}
                     </select>
                 </div>
 
@@ -146,10 +173,12 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
                 </div>
             </div>
 
-            {/* --- DATE FIELDS WITH CONSTRAINTS --- */}
             <div className="modal-row">
                 <div className="modal-col">
-                    <label>Start Date</label>
+                    <label className="required-label">
+                        Start Date
+                        {fieldErrors.startDate && <span className="field-error-inline">{fieldErrors.startDate}</span>}
+                    </label>
                     <input
                         type="date"
                         className="modal-input"
@@ -161,7 +190,10 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
                 </div>
 
                 <div className="modal-col">
-                    <label>End Date</label>
+                    <label className="required-label">
+                        End Date
+                        {fieldErrors.endDate && <span className="field-error-inline">{fieldErrors.endDate}</span>}
+                    </label>
                     <input
                         type="date"
                         className="modal-input"
@@ -173,10 +205,9 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
                 </div>
             </div>
 
-            <div className="modal-actions" style={{ justifyContent: isEditMode ? 'space-between' : 'flex-end' }}>
-                {/* Delete Button (Left Aligned) */}
+            <div className="modal-actions" style={{ justifyContent: isEditMode ? "space-between" : "flex-end" }}>
                 {isEditMode && (
-                    <button 
+                    <button
                         onClick={handleDelete}
                         style={{
                             backgroundColor: '#ef4444',
@@ -190,15 +221,13 @@ const AddMilestoneModal = ({ projectId, milestones, project, onClose, onSuccess,
                             gap: '6px',
                             transition: 'background-color 0.2s'
                         }}
-                        onMouseEnter={(e) => e.currentTarget.style.backgroundColor = '#dc2626'}
-                        onMouseLeave={(e) => e.currentTarget.style.backgroundColor = '#ef4444'}
-                        title="Delete Milestone"
+                        onMouseEnter={e => (e.currentTarget.style.backgroundColor = '#dc2626')}
+                        onMouseLeave={e => (e.currentTarget.style.backgroundColor = '#ef4444')}
                     >
                         <Trash2 size={16} /> Delete
                     </button>
                 )}
 
-                {/* Standard Actions (Right Aligned) */}
                 <div style={{ display: 'flex', gap: '10px' }}>
                     <button className="btn-cancel" onClick={onClose}>Cancel</button>
                     <button className="btn-primary" onClick={handleSubmit}>

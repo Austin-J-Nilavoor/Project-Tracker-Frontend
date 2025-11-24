@@ -7,7 +7,7 @@ const CreateUserModal = ({ onClose, onSuccess, ibuOptions, userToEdit = null }) 
     const [formData, setFormData] = useState({
         name: '',
         email: '',
-        password: 'securePass123',
+        password: '',
         role: 'EMPLOYEE',
         ibuName: ''
     });
@@ -30,7 +30,7 @@ const CreateUserModal = ({ onClose, onSuccess, ibuOptions, userToEdit = null }) 
 
     const handleSubmit = async () => {
         setError(null);
-        
+
         // Basic Validation
         if (!formData.name || !formData.email) {
             setError("Name and Email are required.");
@@ -52,7 +52,7 @@ const CreateUserModal = ({ onClose, onSuccess, ibuOptions, userToEdit = null }) 
             } else {
                 await register.register(formData);
             }
-            
+
             onSuccess(); // Refresh parent list
             onClose();
         } catch (err) {
@@ -64,15 +64,15 @@ const CreateUserModal = ({ onClose, onSuccess, ibuOptions, userToEdit = null }) 
     return (
         <Modal onClose={onClose}>
             <h2>{isEditMode ? "Edit User" : "Create User"}</h2>
-            
+
             {error && (
-                <div className="error-message" style={{ 
-                    padding: '10px', 
-                    backgroundColor: '#fee2e2', 
-                    color: '#ef4444', 
-                    borderRadius: '6px', 
-                    fontSize: '0.875rem', 
-                    marginBottom: '1rem' 
+                <div className="error-message" style={{
+                    padding: '10px',
+                    backgroundColor: '#fee2e2',
+                    color: '#ef4444',
+                    borderRadius: '6px',
+                    fontSize: '0.875rem',
+                    marginBottom: '1rem'
                 }}>
                     {error}
                 </div>
@@ -91,14 +91,14 @@ const CreateUserModal = ({ onClose, onSuccess, ibuOptions, userToEdit = null }) 
                 className="modal-input"
                 value={formData.email}
                 onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-            />
-            <input
+            />{isEditMode ? <></> : <input
                 type="password"
                 placeholder={isEditMode ? "Password (leave blank to keep current)" : "Password"}
                 className="modal-input"
                 value={formData.password}
                 onChange={(e) => setFormData({ ...formData, password: e.target.value })}
-            />
+            />}
+
 
             <label>Role</label>
             <select

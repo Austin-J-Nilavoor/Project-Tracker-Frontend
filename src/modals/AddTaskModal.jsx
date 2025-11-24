@@ -4,7 +4,6 @@ import taskService from "../services/taskServices.js";
 import projectMemberService from "../services/membersServices.js";
 import milestoneService from "../services/milestoneServices.js";
 import Modal from "../components/Modal.jsx";
-// import "./AddTaskModal.css"; 
 
 const AddTaskModal = ({ projectId, milestoneID, isOpen, onClose, onSuccess, taskToEdit = null, isReadOnly = false }) => {
     const [title, setTitle] = useState("");
@@ -15,7 +14,7 @@ const AddTaskModal = ({ projectId, milestoneID, isOpen, onClose, onSuccess, task
     const [assignedToId, setAssignedToId] = useState("");
     const [loading, setLoading] = useState(false);
     const [users, setUsers] = useState([]);
-    const [error, setError] = useState(null);
+    const [fieldErrors, setFieldErrors] = useState({});
     const [maxDate, setMaxDate] = useState("");
 
     const today = new Date().toLocaleDateString("en-CA");
@@ -24,7 +23,7 @@ const AddTaskModal = ({ projectId, milestoneID, isOpen, onClose, onSuccess, task
     useEffect(() => {
         if (!isOpen) return;
 
-        setError(null);
+        setFieldErrors({});
 
         const loadData = async () => {
             try {
@@ -38,7 +37,7 @@ const AddTaskModal = ({ projectId, milestoneID, isOpen, onClose, onSuccess, task
                     }
                 }
             } catch (err) {
-                setError("Failed to load project data.");
+                setFieldErrors(prev => ({ ...prev, general: "Failed to load project data." }));
             }
         };
 
@@ -61,10 +60,16 @@ const AddTaskModal = ({ projectId, milestoneID, isOpen, onClose, onSuccess, task
         }
     }, [isOpen, projectId, milestoneID, taskToEdit, isEditMode]);
 
+    const validateFields = () => {
+        const errors = {};
+        if (!title.trim()) errors.title = "Required";
+        if (!dueDate) errors.dueDate = "Required";
+        if (!assignedToId) errors.assignedToId = "Required";
+        return errors;
+    };
+
     const handleDelete = async () => {
-        if (!window.confirm("Are you sure you want to delete this task? This action cannot be undone.")) {
-            return;
-        }
+        if (!window.confirm("Are you sure you want to delete this task?")) return;
 
         setLoading(true);
         try {
@@ -72,19 +77,17 @@ const AddTaskModal = ({ projectId, milestoneID, isOpen, onClose, onSuccess, task
             onSuccess();
             onClose();
         } catch (err) {
-            setError(err.response?.data?.message || "Failed to delete task.");
+            setFieldErrors({ general: err.response?.data?.message || "Failed to delete task." });
             setLoading(false);
         }
     };
 
     const handleSubmit = async () => {
-        // Prevent submission if read-only (extra safety)
         if (isReadOnly) return;
 
-        setError(null);
-
-        if (!title.trim()) {
-            setError("Task title is required.");
+        const errors = validateFields();
+        if (Object.keys(errors).length > 0) {
+            setFieldErrors(errors);
             return;
         }
 
@@ -109,7 +112,7 @@ const AddTaskModal = ({ projectId, milestoneID, isOpen, onClose, onSuccess, task
             onSuccess();
             onClose();
         } catch (err) {
-            setError(err.response?.data?.message || "Failed to save task.");
+            setFieldErrors({ general: err.response?.data?.message || "Failed to save task." });
         } finally {
             setLoading(false);
         }
@@ -117,36 +120,39 @@ const AddTaskModal = ({ projectId, milestoneID, isOpen, onClose, onSuccess, task
 
     if (!isOpen) return null;
 
-    // Determine Modal Title
-    let modalTitle = "Add New Task";
-    if (isReadOnly) modalTitle = "View Task Details";
-    else if (isEditMode) modalTitle = "Edit Task";
+    let modalTitle = isReadOnly ? "View Task Details" : isEditMode ? "Edit Task" : "Add New Task";
 
     return (
         <Modal onClose={onClose} className="modal-box-task">
             <h3>{modalTitle}</h3>
 
-            {error && <div className="atm-error-message">{error}</div>}
+            {fieldErrors.general && (
+                <div className="atm-error-message">{fieldErrors.general}</div>
+            )}
+
             <div className="modal-row">
                 <div className="modal-col">
-                    <label>Title</label>
+                    <div className="label-row">
+                        <label className="required-label">Title {fieldErrors.title && <span className="atm-inline-error">{fieldErrors.title}</span>}</label>
+
+                    </div>
                     <input
                         value={title}
-                        disabled={isReadOnly} // DISABLED CHECK
+                        disabled={isReadOnly}
                         onChange={(e) => {
                             setTitle(e.target.value);
-                            if (error) setError(null);
+                            setFieldErrors(prev => ({ ...prev, title: null }));
                         }}
                         placeholder="Enter task title"
                     />
 
                     <div className="modal-row">
                         <div className="modal-col">
-                            <label>Priority</label>
-                            <select 
-                                value={priority} 
+                            <label className="required-label">Priority </label>
+                            <select
+                                value={priority}
+                                disabled={isReadOnly}
                                 onChange={(e) => setPriority(e.target.value)}
-                                disabled={isReadOnly} // DISABLED CHECK
                             >
                                 <option value="LOW">Low</option>
                                 <option value="MEDIUM">Medium</option>
@@ -156,11 +162,11 @@ const AddTaskModal = ({ projectId, milestoneID, isOpen, onClose, onSuccess, task
 
                         {isEditMode && (
                             <div className="modal-col">
-                                <label>Status</label>
-                                <select 
-                                    value={status} 
+                                <label className="required-label">Status </label>
+                                <select
+                                    value={status}
+                                    disabled={isReadOnly}
                                     onChange={(e) => setStatus(e.target.value)}
-                                    disabled={isReadOnly} // DISABLED CHECK
                                 >
                                     <option value="PENDING">To Do</option>
                                     <option value="IN_PROGRESS">In Progress</option>
@@ -170,67 +176,75 @@ const AddTaskModal = ({ projectId, milestoneID, isOpen, onClose, onSuccess, task
                         )}
                     </div>
 
-                    <label>
-                        Due Date{" "}
-                        {maxDate && !isReadOnly && (
-                            <span className="atm-date-range">(Range: {today} to {maxDate})</span>
-                        )}
-                    </label>
+                    <div className="label-row">
+                        <label className="required-label">Due Date {fieldErrors.dueDate && <span className="atm-inline-error">{fieldErrors.dueDate}</span>}</label>
+
+                    </div>
 
                     <input
                         type="date"
                         value={dueDate}
                         min={today}
                         max={maxDate}
-                        onChange={(e) => setDueDate(e.target.value)}
-                        disabled={isReadOnly} // DISABLED CHECK
+                        disabled={isReadOnly}
+                        onChange={(e) => {
+                            setDueDate(e.target.value);
+                            setFieldErrors(prev => ({ ...prev, dueDate: null }));
+                        }}
                     />
-
                 </div>
+
                 <div className="modal-col">
-                    <label>Description</label>
+                    <label >Description</label>
                     <textarea
                         value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        disabled={isReadOnly}
                         className="modal-textarea modal-textarea-task"
                         placeholder="Describe the task..."
-                        disabled={isReadOnly} // DISABLED CHECK
+                        onChange={(e) => setDescription(e.target.value)}
                     />
-                    <label>Assign To</label>
-                    <select 
-                        value={assignedToId} 
-                        onChange={(e) => setAssignedToId(e.target.value)}
-                        disabled={isReadOnly} // DISABLED CHECK
+
+                    <div className="label-row">
+                        <label className="required-label">Assign To {fieldErrors.assignedToId && <span className="atm-inline-error">{fieldErrors.assignedToId}</span>}</label>
+                    </div>
+
+                    <select
+                        value={assignedToId}
+                        disabled={isReadOnly}
+                        onChange={(e) => {
+                            setAssignedToId(e.target.value);
+                            setFieldErrors(prev => ({ ...prev, assignedToId: null }));
+                        }}
                     >
                         <option value="">Select user</option>
                         {users.map((u) => (
                             <option key={u.userId} value={u.userId}>
-                                {u.userName} {`  (${u.role.toLowerCase()})`}
+                                {u.userName} ({u.role.toLowerCase()})
                             </option>
                         ))}
                     </select>
                 </div>
             </div>
 
-            <div className={`atm-modal-actions ${isEditMode && !isReadOnly ? "atm-space-between" : "atm-right-aligned"}`}>
-                {/* Hide Delete Button if Read Only */}
+            <div
+                className={`atm-modal-actions ${isEditMode && !isReadOnly ? "atm-space-between" : "atm-right-aligned"
+                    }`}
+            >
                 {isEditMode && !isReadOnly && (
                     <button
                         onClick={handleDelete}
                         disabled={loading}
                         className="atm-delete-btn"
-                        title="Delete Task"
                     >
                         <Trash2 size={16} /> Delete
                     </button>
                 )}
 
                 <div className="atm-right-buttons">
-                    <button className="btn-secondary" onClick={onClose} disabled={loading}>
+                    <button className="btn-secondary" onClick={onClose}>
                         {isReadOnly ? "Close" : "Cancel"}
                     </button>
-                    
-                    {/* Hide Save Button if Read Only */}
+
                     {!isReadOnly && (
                         <button className="btn-primary" onClick={handleSubmit} disabled={loading}>
                             {loading ? "Saving..." : isEditMode ? "Save Changes" : "Create Task"}

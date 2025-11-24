@@ -5,14 +5,28 @@ import Modal from '../components/Modal';
 const AddMemberModal = ({ projectId, allUsers, onClose, onSuccess }) => {
     const [userId, setUserId] = useState("");
     const [role, setRole] = useState("DEVELOPER");
-    const [error, setError] = useState(null); // 1. Add Error State
+    const [error, setError] = useState(null); // Top error message
+    const [fieldError, setFieldError] = useState({ user: "", role: "" }); // Inline errors
 
     const handleSubmit = async () => {
-        setError(null); // Reset error on new attempt
+        setError(null);
+        setFieldError({ user: "", role: "" });
 
-        // 2. Basic Validation
+        let hasError = false;
+        let newErrors = { user: "", role: "" };
+
         if (!userId) {
-            setError("Please select a user.");
+            newErrors.user = "Required";
+            hasError = true;
+        }
+
+        if (!role) {
+            newErrors.role = "Required";
+            hasError = true;
+        }
+
+        if (hasError) {
+            setFieldError(newErrors);
             return;
         }
 
@@ -21,7 +35,6 @@ const AddMemberModal = ({ projectId, allUsers, onClose, onSuccess }) => {
             onSuccess();
             onClose();
         } catch (err) {
-            // 3. Set API Error message
             console.error(err);
             setError(err.response?.data?.message || "Failed to add member");
         }
@@ -29,14 +42,14 @@ const AddMemberModal = ({ projectId, allUsers, onClose, onSuccess }) => {
 
     const handleUserChange = (e) => {
         setUserId(e.target.value);
-        if (error) setError(null); // Clear error when user interacts
+        if (error) setError(null);
     };
 
     return (
         <Modal onClose={onClose}>
             <h3>Add Member</h3>
 
-            {/* 4. Error Message UI */}
+            {/* Existing error UI unchanged */}
             {error && (
                 <div className="error-message" style={{
                     padding: '10px',
@@ -51,11 +64,19 @@ const AddMemberModal = ({ projectId, allUsers, onClose, onSuccess }) => {
                 </div>
             )}
 
-            <label>User</label>
+            {/* User Field */}
+            <label className="required-label" >
+                User
+                {fieldError.user && (
+                    <span className="field-error-inline" style={{ color: '#ef4444', fontSize: '12px' }}>
+                        {fieldError.user}
+                    </span>
+                )}
+            </label>
             <select
                 value={userId}
                 onChange={handleUserChange}
-                className="modal-input" // Added for consistent styling
+                className="modal-input"
             >
                 <option value="">Select User</option>
                 {allUsers.map(u => (
@@ -65,11 +86,19 @@ const AddMemberModal = ({ projectId, allUsers, onClose, onSuccess }) => {
                 ))}
             </select>
 
-            <label>Role</label>
+            {/* Role Field */}
+            <label className="required-label">
+                Role
+                {fieldError.role && (
+                    <span className="field-error-inline" style={{ color: '#ef4444', fontSize: '12px' }}>
+                        {fieldError.role}
+                    </span>
+                )}
+            </label>
             <select
                 value={role}
                 onChange={e => setRole(e.target.value)}
-                className="modal-input" // Added for consistent styling
+                className="modal-input"
             >
                 <option value="PROJECT_MANAGER">Project Manager</option>
                 <option value="DEVELOPER">Developer</option>

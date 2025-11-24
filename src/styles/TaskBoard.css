@@ -259,3 +259,14 @@
     cursor: default; /* Removes the "grab" hand cursor */
     background-color: #f5f5f5; /* Optional: darker background */
 }
+.atm-inline-error {
+    color: #ef4444;
+    font-size: 0.75rem;
+    margin-left: 10px;
+    font-weight: 500;
+    white-space: nowrap;
+}
+.label-row {
+    display: flex;
+    align-items: center;
+}
